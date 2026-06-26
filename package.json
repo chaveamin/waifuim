@@ -1,0 +1,24 @@
+{
+  "name": "waifuim-telegram-bot",
+  "version": "1.0.0",
+  "description": "Telegram bot for Anime waifu with admin panel",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx src/index.ts",
+    "build": "node build.mjs",
+    "start": "node dist/bot.mjs"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "grammy": "^1.35.0",
+    "hono": "^4.12.27",
+    "sql.js": "^1.13.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.3",
+    "esbuild": "^0.28.1",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3",
+    "wrangler": "^4.105.0"
+  }
+}
