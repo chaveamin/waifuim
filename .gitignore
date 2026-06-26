@@ -6,6 +6,7 @@
 .pnp.js
 /.open-next/
 /.wrangler/
+wrangler.toml
 
 # testing
 /coverage
