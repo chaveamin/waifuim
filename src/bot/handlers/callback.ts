@@ -241,7 +241,7 @@ async function handleSettings(ctx: Context) {
       : nsfwMode === "any"
         ? `✅ ${tr("settings_sfw_nsfw", ctx)}`
         : `✅ ${tr("settings_sfw_only", ctx)}`
-    : `🔒 ${tr("settings_sfw_only", ctx)} ${tr("settings_admin_locked", ctx)}`;
+    : `${tr("settings_sfw_only", ctx)} ${tr("settings_admin_locked", ctx)}`;
 
   const text =
     `${tr("settings_title", ctx)}\n\n` +
@@ -255,20 +255,20 @@ async function handleSettings(ctx: Context) {
   if (config.nsfwAllowed) {
     kb.text(
       nsfwMode === "sfw"
-        ? `✅ 🔒 ${tr("settings_sfw_only", ctx)}`
-        : `🔒 ${tr("settings_sfw_only", ctx)}`,
+        ? `✅ ${tr("settings_sfw_only", ctx)}`
+        : `${tr("settings_sfw_only", ctx)}`,
       "set_nsfw:sfw",
     );
     kb.text(
       nsfwMode === "any"
-        ? `✅ 🔄 ${tr("settings_sfw_nsfw", ctx)}`
-        : `🔄 ${tr("settings_sfw_nsfw", ctx)}`,
+        ? `✅ ${tr("settings_sfw_nsfw", ctx)}`
+        : `${tr("settings_sfw_nsfw", ctx)}`,
       "set_nsfw:any",
     ).row();
     kb.text(
       nsfwMode === "nsfw"
-        ? `✅ 🔞 ${tr("settings_nsfw_only", ctx)}`
-        : `🔞 ${tr("settings_nsfw_only", ctx)}`,
+        ? `✅ ${tr("settings_nsfw_only", ctx)}`
+        : `${tr("settings_nsfw_only", ctx)}`,
       "set_nsfw:nsfw",
     ).row();
   }
@@ -280,41 +280,41 @@ async function handleSettings(ctx: Context) {
     .row();
   kb.text(
     orientation === "landscape"
-      ? `✅ 🌄 ${tr("settings_landscape", ctx)}`
-      : `🌄 ${tr("settings_landscape", ctx)}`,
+      ? `✅ ${tr("settings_landscape", ctx)}`
+      : `${tr("settings_landscape", ctx)}`,
     "set_orientation:landscape",
   )
     .text(
       orientation === "portrait"
-        ? `✅ 🖼️ ${tr("settings_portrait", ctx)}`
-        : `🖼️ ${tr("settings_portrait", ctx)}`,
+        ? `✅ ${tr("settings_portrait", ctx)}`
+        : `${tr("settings_portrait", ctx)}`,
       "set_orientation:portrait",
     )
     .row()
     .text(
       orientation === "any"
-        ? `✅ 🔄 ${tr("settings_any", ctx)}`
-        : `🔄 ${tr("settings_any", ctx)}`,
+        ? `✅ ${tr("settings_any", ctx)}`
+        : `${tr("settings_any", ctx)}`,
       "set_orientation:any",
     )
     .row();
   kb.text(
     animation === "animated"
-      ? `✅ 🎞️ ${tr("settings_animated", ctx)}`
-      : `🎞️ ${tr("settings_animated", ctx)}`,
+      ? `✅ ${tr("settings_animated", ctx)}`
+      : `${tr("settings_animated", ctx)}`,
     "set_animation:animated",
   )
     .text(
       animation === "static"
-        ? `✅ 🖼️ ${tr("settings_static", ctx)}`
-        : `🖼️ ${tr("settings_static", ctx)}`,
+        ? `✅ ${tr("settings_static", ctx)}`
+        : `${tr("settings_static", ctx)}`,
       "set_animation:static",
     )
     .row()
     .text(
       animation === "any"
-        ? `✅ 🔄 ${tr("settings_any", ctx)}`
-        : `🔄 ${tr("settings_any", ctx)}`,
+        ? `✅ ${tr("settings_any", ctx)}`
+        : `${tr("settings_any", ctx)}`,
       "set_animation:any",
     )
     .row();
