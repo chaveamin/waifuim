@@ -82,8 +82,8 @@ export const messages: Record<string, Record<Lang, string>> = {
     fa: "حالت اینلاین:",
   },
   inline_tip: {
-    en: "Type @botname <tags> in any chat",
-    fa: "@botname <tags> را در هر چتی تایپ کنید",
+    en: "Type @waifuimbot <tags> in any chat",
+    fa: "@waifuimbot <tags> را در هر چتی تایپ کنید",
   },
   admin_commands: {
     en: "Admin Commands:",
