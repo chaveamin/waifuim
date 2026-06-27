@@ -1,4 +1,3 @@
--- Run this in Cloudflare D1 console after creating the database
 
 CREATE TABLE IF NOT EXISTS users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,

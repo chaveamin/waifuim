@@ -26,7 +26,7 @@ export function registerArtists(bot: any) {
       logger.error("Artists error:", err);
       await ctx.reply("Failed to fetch artists.", {
         reply_markup: new InlineKeyboard().text(
-          `🏠 ${tr("btn_back_to_menu", ctx)}`,
+          `${tr("btn_back_to_menu", ctx)}`,
           "cmd:main",
         ),
       });
@@ -90,13 +90,16 @@ export function registerArtists(bot: any) {
             `🎨 Another from ${artistName ?? "Artist"}`,
             `artist_random:${artistId}`,
           ).row();
-          kb.text("🎨 Artists", "cmd:artists").text("🏠 Menu", "cmd:main");
+          kb.text("🎨 Artists", "cmd:artists").text(
+            tr("btn_menu", ctx),
+            "cmd:main",
+          );
           await ctx.reply(text, { reply_markup: kb });
         }
       } else {
         await ctx.reply("No images found for this artist.", {
           reply_markup: new InlineKeyboard().text(
-            `🏠 ${tr("btn_back_to_menu", ctx)}`,
+            `${tr("btn_back_to_menu", ctx)}`,
             "cmd:main",
           ),
         });
@@ -104,7 +107,7 @@ export function registerArtists(bot: any) {
     } catch {
       await ctx.reply("Failed to fetch artist images.", {
         reply_markup: new InlineKeyboard().text(
-          `🏠 ${tr("btn_back_to_menu", ctx)}`,
+          `${tr("btn_back_to_menu", ctx)}`,
           "cmd:main",
         ),
       });
@@ -131,7 +134,7 @@ export function registerArtists(bot: any) {
       if (!result.items.length) {
         await ctx.reply("No more images from this artist.", {
           reply_markup: new InlineKeyboard().text(
-            `🏠 ${tr("btn_back_to_menu", ctx)}`,
+            `${tr("btn_back_to_menu", ctx)}`,
             "cmd:main",
           ),
         });
@@ -150,7 +153,7 @@ export function registerArtists(bot: any) {
     } catch {
       await ctx.reply("Failed to fetch image.", {
         reply_markup: new InlineKeyboard().text(
-          `🏠 ${tr("btn_back_to_menu", ctx)}`,
+          `${tr("btn_back_to_menu", ctx)}`,
           "cmd:main",
         ),
       });
@@ -200,7 +203,7 @@ async function searchArtistByName(ctx: Context, query: string) {
       await ctx.reply(`No artists found matching "${query}".`, {
         reply_markup: new InlineKeyboard()
           .text("🎨 Artists", "cmd:artists")
-          .text("🏠 Menu", "cmd:main"),
+          .text(tr("btn_menu", ctx), "cmd:main"),
       });
       return;
     }
@@ -215,7 +218,10 @@ async function searchArtistByName(ctx: Context, query: string) {
       kb.text(`🎨 ${a.name}`, `artist_images:${a.id}`).row();
     }
     kb.row().text("🔍 Search Again", "artists:search");
-    kb.text("🎨 All Artists", "cmd:artists").text("🏠 Menu", "cmd:main");
+    kb.text("🎨 All Artists", "cmd:artists").text(
+      tr("btn_menu", ctx),
+      "cmd:main",
+    );
 
     if (ctx.callbackQuery) {
       await ctx
@@ -228,7 +234,7 @@ async function searchArtistByName(ctx: Context, query: string) {
     logger.error("Artist search error:", err);
     await ctx.reply("Failed to search artists.", {
       reply_markup: new InlineKeyboard().text(
-        `🏠 ${tr("btn_back_to_menu", ctx)}`,
+        `${tr("btn_back_to_menu", ctx)}`,
         "cmd:main",
       ),
     });
@@ -255,10 +261,12 @@ function showArtistsPage(
   kb.row().text("🔍 Search Artist", "artists:search");
   if (totalPages > 1) {
     kb.row();
-    if (page > 1) kb.text("◀️ Prev", `artists_page:${page - 1}`);
-    if (page < totalPages) kb.text("▶️ Next", `artists_page:${page + 1}`);
+    if (page > 1)
+      kb.text(`◀️ ${tr("prev_page", ctx)}`, `artists_page:${page - 1}`);
+    if (page < totalPages)
+      kb.text(`▶️ ${tr("next_page", ctx)}`, `artists_page:${page + 1}`);
   }
-  kb.row().text(`🏠 ${tr("btn_back_to_menu", ctx)}`, "cmd:main");
+  kb.row().text(`${tr("btn_back_to_menu", ctx)}`, "cmd:main");
 
   ctx.api
     .editMessageText(chatId, msgId, text, { reply_markup: kb })

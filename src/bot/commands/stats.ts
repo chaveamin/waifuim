@@ -16,7 +16,7 @@ export function registerStats(bot: any) {
         `🎨 Total Artists: ${stats.totalArtists.toLocaleString()}`;
 
       const kb = new InlineKeyboard().text(
-        `🏠 ${tr("btn_back_to_menu", ctx)}`,
+        `${tr("btn_back_to_menu", ctx)}`,
         "cmd:main",
       );
       await ctx.reply(text, { reply_markup: kb });
@@ -24,7 +24,7 @@ export function registerStats(bot: any) {
       logger.error("Stats error:", err);
       await ctx.reply("Failed to fetch statistics.", {
         reply_markup: new InlineKeyboard().text(
-          `🏠 ${tr("btn_back_to_menu", ctx)}`,
+          `${tr("btn_back_to_menu", ctx)}`,
           "cmd:main",
         ),
       });

@@ -25,7 +25,7 @@ export function registerTags(bot: any) {
       logger.error("Tags error:", err);
       await ctx.reply("Failed to fetch tags.", {
         reply_markup: new InlineKeyboard().text(
-          `🏠 ${tr("btn_back_to_menu", ctx)}`,
+          `${tr("btn_back_to_menu", ctx)}`,
           "cmd:main",
         ),
       });
@@ -82,13 +82,16 @@ export function registerTags(bot: any) {
           for (const img of result.items) {
             kb.text(`🖼️ Image ${img.id}`, `img_detail:${img.id}`).row();
           }
-          kb.text("🏷️ More Tags", "cmd:tags").text("🏠 Menu", "cmd:main");
+          kb.text("🏷️ More Tags", "cmd:tags").text(
+            tr("btn_menu", ctx),
+            "cmd:main",
+          );
           await ctx.reply(text, { reply_markup: kb });
         }
       } else {
         await ctx.reply(`No images found for tag: ${tagName}`, {
           reply_markup: new InlineKeyboard().text(
-            `🏠 ${tr("btn_back_to_menu", ctx)}`,
+            `${tr("btn_back_to_menu", ctx)}`,
             "cmd:main",
           ),
         });
@@ -96,7 +99,7 @@ export function registerTags(bot: any) {
     } catch {
       await ctx.reply("Failed to search tag.", {
         reply_markup: new InlineKeyboard().text(
-          `🏠 ${tr("btn_back_to_menu", ctx)}`,
+          `${tr("btn_back_to_menu", ctx)}`,
           "cmd:main",
         ),
       });
@@ -121,10 +124,12 @@ function showTagsPage(
   for (const tag of items) {
     kb.text(`🏷️ ${tag.name}`, `search_tag:${tag.slug}`).row();
   }
-  kb.row().text(`🏠 ${tr("btn_back_to_menu", _ctx)}`, "cmd:main");
+  kb.row().text(`${tr("btn_back_to_menu", _ctx)}`, "cmd:main");
   if (totalPages > 1) {
-    if (page > 1) kb.text("◀️ Prev", `tags_page:${page - 1}`);
-    if (page < totalPages) kb.text("▶️ Next", `tags_page:${page + 1}`);
+    if (page > 1)
+      kb.text(`◀️ ${tr("prev_page", _ctx)}`, `tags_page:${page - 1}`);
+    if (page < totalPages)
+      kb.text(`▶️ ${tr("next_page", _ctx)}`, `tags_page:${page + 1}`);
   }
 
   _ctx.api

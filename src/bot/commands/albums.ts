@@ -375,7 +375,7 @@ async function showAlbums(ctx: Context, telegramId: number) {
     const kb = new InlineKeyboard()
       .text("➕ Create Album", "albums:create")
       .row()
-      .text(`🏠 ${tr("btn_back_to_menu", ctx)}`, "cmd:main");
+      .text(`${tr("btn_back_to_menu", ctx)}`, "cmd:main");
     const text =
       "📚 No albums yet.\n\nCreate albums to organize your favorite images into themed collections!";
     if (ctx.callbackQuery) {
@@ -399,7 +399,7 @@ async function showAlbums(ctx: Context, telegramId: number) {
     kb.text(`📁 ${a.name} (${a.image_count})`, `album_view:${a.id}`).row();
   }
   kb.text("➕ Create New Album", "albums:create").row();
-  kb.text(`🏠 ${tr("btn_back_to_menu", ctx)}`, "cmd:main");
+  kb.text(`${tr("btn_back_to_menu", ctx)}`, "cmd:main");
 
   if (ctx.callbackQuery) {
     await ctx
@@ -458,9 +458,14 @@ async function showAlbum(
     kb.row();
     if (page > 1) kb.text("◀️ Prev", `album_page:${albumId}:${page - 1}`);
     if (page < totalPages)
-      kb.text("▶️ Next", `album_page:${albumId}:${page + 1}`);
+      kb.text(
+        `▶️ ${tr("next_page", ctx)}`,
+        `album_page:${albumId}:${page + 1}`,
+      );
   }
-  kb.row().text("📚 All Albums", "albums:list").text("🏠 Menu", "cmd:main");
+  kb.row()
+    .text("📚 All Albums", "albums:list")
+    .text(tr("btn_menu", ctx), "cmd:main");
 
   if (ctx.callbackQuery) {
     await ctx
@@ -475,7 +480,7 @@ async function showSharedAlbum(ctx: Context, token: string, page: number) {
   const album = await getAlbumByShareToken(token);
   if (!album) {
     await ctx.reply("Album not found or link expired.", {
-      reply_markup: new InlineKeyboard().text("🏠 Menu", "cmd:main"),
+      reply_markup: new InlineKeyboard().text(tr("btn_menu", ctx), "cmd:main"),
     });
     return;
   }
@@ -515,11 +520,20 @@ async function showSharedAlbum(ctx: Context, token: string, page: number) {
   }
   kb.text("📋 Copy to My Albums", `album_copy:${album.id}`).row();
   if (totalPages > 1) {
-    if (page > 1) kb.text("◀️ Prev", `album_sharedpage:${token}:${page - 1}`);
+    if (page > 1)
+      kb.text(
+        `◀️ ${tr("prev_page", ctx)}`,
+        `album_sharedpage:${token}:${page - 1}`,
+      );
     if (page < totalPages)
-      kb.text("▶️ Next", `album_sharedpage:${token}:${page + 1}`);
+      kb.text(
+        `▶️ ${tr("next_page", ctx)}`,
+        `album_sharedpage:${token}:${page + 1}`,
+      );
   }
-  kb.row().text("📚 My Albums", "albums:list").text("🏠 Menu", "cmd:main");
+  kb.row()
+    .text("📚 My Albums", "albums:list")
+    .text(tr("btn_menu", ctx), "cmd:main");
 
   if (ctx.callbackQuery) {
     await ctx

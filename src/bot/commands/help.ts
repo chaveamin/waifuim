@@ -20,14 +20,12 @@ export function registerHelp(bot: any) {
       `${tr("cmd_profile", ctx)}\n` +
       `${tr("cmd_settings", ctx)}\n` +
       `${tr("cmd_stats", ctx)}\n\n` +
-      `${tr("tip_fav_album", ctx)}\n` +
-      `${tr("tip_settings", ctx)}\n\n` +
       `${tr("inline_mode", ctx)}\n` +
-      `${tr("inline_tip", ctx)}\n\n` +
-      `Examples:\n/random\n/group\n/search waifu maid\n/image 1234`;
+      `${tr("inline_tip", ctx)}\n\n`;
 
-    const isAdmin = config.adminTelegramId && ctx.from?.id === config.adminTelegramId;
-    const adminText = isAdmin ? `\n\n${tr("admin_commands", ctx)}\n${tr("admin_panel", ctx)}` : "";
+    const isAdmin =
+      config.adminTelegramId && ctx.from?.id === config.adminTelegramId;
+    const adminText = isAdmin;
 
     const kb = new InlineKeyboard()
       .text(tr("btn_random", ctx), "cmd:random")

@@ -1,6 +1,11 @@
 import { Context } from "grammy";
 import { InlineKeyboard } from "grammy";
-import { getUserCount, getActiveUserCount, getTopCommands, getNewUserCount } from "../../db/queries.js";
+import {
+  getUserCount,
+  getActiveUserCount,
+  getTopCommands,
+  getNewUserCount,
+} from "../../db/queries.js";
 import { getPublicStats } from "../../api/waifu.js";
 import { tr } from "../../i18n/index.js";
 import { logger } from "../../utils/logger.js";
@@ -17,17 +22,27 @@ export function registerAdminStats(bot: any) {
       const stats = await getPublicStats();
       const text =
         `${tr("stats_title", ctx)}\n\n` +
-        `📈 ${tr("stats_requests", ctx)}: ${stats.totalRequests.toLocaleString()}\n` +
-        `🖼️ ${tr("stats_images", ctx)}: ${stats.totalImages.toLocaleString()}\n` +
-        `🏷️ ${tr("stats_tags", ctx)}: ${stats.totalTags.toLocaleString()}\n` +
-        `🎨 ${tr("stats_artists", ctx)}: ${stats.totalArtists.toLocaleString()}`;
+        `${tr("stats_requests", ctx)}: ${stats.totalRequests.toLocaleString()}\n` +
+        `${tr("stats_images", ctx)}: ${stats.totalImages.toLocaleString()}\n` +
+        `${tr("stats_tags", ctx)}: ${stats.totalTags.toLocaleString()}\n` +
+        `${tr("stats_artists", ctx)}: ${stats.totalArtists.toLocaleString()}`;
 
-      const kb = new InlineKeyboard().text(tr("btn_back", ctx), "admin:back").text(tr("btn_menu", ctx), "cmd:main");
-      if (ctx.callbackQuery) await ctx.editMessageText(text, { reply_markup: kb }).catch(() => ctx.reply(text, { reply_markup: kb }));
+      const kb = new InlineKeyboard()
+        .text(tr("btn_back", ctx), "admin:back")
+        .text(tr("btn_menu", ctx), "cmd:main");
+      if (ctx.callbackQuery)
+        await ctx
+          .editMessageText(text, { reply_markup: kb })
+          .catch(() => ctx.reply(text, { reply_markup: kb }));
       else await ctx.reply(text, { reply_markup: kb });
     } catch (err) {
       logger.error("API stats error:", err);
-      await ctx.reply(tr("stats_failed", ctx), { reply_markup: new InlineKeyboard().text(tr("btn_back", ctx), "admin:back") });
+      await ctx.reply(tr("stats_failed", ctx), {
+        reply_markup: new InlineKeyboard().text(
+          tr("btn_back", ctx),
+          "admin:back",
+        ),
+      });
     }
   });
 }
@@ -47,7 +62,12 @@ async function showDetailedStats(ctx: Context) {
     for (const cmd of topCommands) text += `  ${cmd.command}: ${cmd.count}\n`;
   }
 
-  const kb = new InlineKeyboard().text(tr("btn_back", ctx), "admin:back").text(tr("btn_menu", ctx), "cmd:main");
-  if (ctx.callbackQuery) ctx.editMessageText(text, { reply_markup: kb }).catch(() => ctx.reply(text, { reply_markup: kb }));
+  const kb = new InlineKeyboard()
+    .text(tr("btn_back", ctx), "admin:back")
+    .text(tr("btn_menu", ctx), "cmd:main");
+  if (ctx.callbackQuery)
+    ctx
+      .editMessageText(text, { reply_markup: kb })
+      .catch(() => ctx.reply(text, { reply_markup: kb }));
   else ctx.reply(text, { reply_markup: kb });
 }

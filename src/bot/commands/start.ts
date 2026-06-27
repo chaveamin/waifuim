@@ -16,14 +16,19 @@ export function registerStart(bot: any) {
 
       if (!album) {
         await ctx.reply(t("image_not_found", lang), {
-          reply_markup: new InlineKeyboard().text(tr("btn_menu", ctx), "cmd:main"),
+          reply_markup: new InlineKeyboard().text(
+            tr("btn_menu", ctx),
+            "cmd:main",
+          ),
         });
         return;
       }
 
       const { getUser } = await import("../../db/queries.js");
       const owner = await getUser(album.user_id);
-      const ownerName = owner?.username ? `@${owner.username}` : owner?.first_name || "Unknown";
+      const ownerName = owner?.username
+        ? `@${owner.username}`
+        : owner?.first_name || "Unknown";
 
       let text = `${tr("albums_shared_view", ctx)}\n\n📁 ${album.name}`;
       if (album.description) text += `\n📝 ${album.description}`;
@@ -65,7 +70,9 @@ export function registerStart(bot: any) {
 
 export async function showMainMenu(ctx: Context) {
   const lang = getLang(ctx);
-  const isAdmin = !!(config.adminTelegramId && ctx.from?.id === config.adminTelegramId);
+  const isAdmin = !!(
+    config.adminTelegramId && ctx.from?.id === config.adminTelegramId
+  );
 
   const kb = new InlineKeyboard()
     .text(t("btn_random", lang), "cmd:random")
@@ -84,14 +91,14 @@ export async function showMainMenu(ctx: Context) {
     .text(t("btn_settings", lang), "cmd:settings")
     .row()
     .text(t("btn_leaderboard", lang), "cmd:leaderboard")
-    .text(t("btn_help", lang), "cmd:help")
-    .row()
-    .text(lang === "en" ? "🇮🇷 فارسی" : "🇺🇸 English", `set_lang:${lang === "en" ? "fa" : "en"}`);
+    .text(t("btn_help", lang), "cmd:help");
 
   if (isAdmin) kb.row().text(t("btn_admin_panel", lang), "cmd:admin");
 
   if (ctx.callbackQuery) {
-    await ctx.editMessageText(t("welcome", lang), { reply_markup: kb }).catch(() => ctx.reply(t("welcome", lang), { reply_markup: kb }));
+    await ctx
+      .editMessageText(t("welcome", lang), { reply_markup: kb })
+      .catch(() => ctx.reply(t("welcome", lang), { reply_markup: kb }));
   } else {
     await ctx.reply(t("welcome", lang), { reply_markup: kb });
   }

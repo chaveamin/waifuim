@@ -1,4 +1,4 @@
-import { InlineKeyboard } from "grammy";
+import { InlineKeyboard, Context } from "grammy";
 import type { WaifuImage } from "../api/types.js";
 import type { ImageSearchParams } from "../api/types.js";
 import type { DbUser } from "../db/queries.js";
@@ -45,6 +45,7 @@ export function buildImageKb(
   isFavorited: boolean,
   artistId?: number,
   artistName?: string,
+  ctx?: any,
 ): InlineKeyboard {
   const kb = new InlineKeyboard()
     .text(
@@ -62,7 +63,7 @@ export function buildImageKb(
   kb.text("🎲 Random", "cmd:random")
     .text("🔍 Search", "cmd:search")
     .row()
-    .text("🏠 Menu", "cmd:main");
+    .text(tr("btn_menu", ctx), "cmd:main");
   return kb;
 }
 
@@ -73,6 +74,7 @@ function truncate(text: string, max: number): string {
 export function buildMiniImageKb(
   imageId: number,
   isFavorited: boolean,
+  ctx: Context,
 ): InlineKeyboard {
   return new InlineKeyboard()
     .text(
@@ -81,7 +83,7 @@ export function buildMiniImageKb(
     )
     .text("📚 Albums", `pick_album:${imageId}`)
     .row()
-    .text("🏠 Menu", "cmd:main");
+    .text(tr("btn_menu", ctx), "cmd:main");
 }
 
 export function buildSearchParams(

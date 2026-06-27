@@ -32,7 +32,7 @@ export function registerSearch(bot: any) {
         .text("🎲 Random SFW", "search_random:sfw")
         .text("🎲 Random NSFW", "search_random:nsfw")
         .row()
-        .text(`🏠 ${tr("btn_back_to_menu", ctx)}`, "cmd:main");
+        .text(`${tr("btn_back_to_menu", ctx)}`, "cmd:main");
 
       await ctx.reply("🔍 Select tags or enter /search <tag1> <tag2>:", {
         reply_markup: kb,
@@ -73,7 +73,7 @@ export function registerSearch(bot: any) {
       if (!result.items.length) {
         await ctx.reply("No images found.", {
           reply_markup: new InlineKeyboard().text(
-            `🏠 ${tr("btn_back_to_menu", ctx)}`,
+            `${tr("btn_back_to_menu", ctx)}`,
             "cmd:main",
           ),
         });
@@ -102,7 +102,7 @@ export function registerSearch(bot: any) {
           kb.text(`🖼️ Image ${img.id}`, `img_detail:${img.id}`).row();
         }
         kb.text("🎲 More Random", `search_random:${mode}`).text(
-          "🏠 Menu",
+          tr("btn_menu", ctx),
           "cmd:main",
         );
         await ctx.reply(text, { reply_markup: kb });
@@ -111,7 +111,7 @@ export function registerSearch(bot: any) {
       logger.error("Search random error:", err);
       await ctx.reply("Failed to fetch image.", {
         reply_markup: new InlineKeyboard().text(
-          `🏠 ${tr("btn_back_to_menu", ctx)}`,
+          `${tr("btn_back_to_menu", ctx)}`,
           "cmd:main",
         ),
       });
@@ -131,7 +131,7 @@ async function performSearch(ctx: Context, tags: string[], page: number) {
     if (!result.items.length) {
       const noResult = "No images found for these tags.";
       const noKb = new InlineKeyboard().text(
-        `🏠 ${tr("btn_back_to_menu", ctx)}`,
+        `${tr("btn_back_to_menu", ctx)}`,
         "cmd:main",
       );
       if (ctx.callbackQuery) {
@@ -145,7 +145,7 @@ async function performSearch(ctx: Context, tags: string[], page: number) {
     }
 
     const tagList = tags.join(", ");
-    let text = `🔍 ${tr("search_results", ctx)}: ${tagList}\n${tr("tags_page", ctx)} ${result.pageNumber}/${result.totalPages} (${result.totalCount} ${tr("tags_total", ctx)})\n\n`;
+    let text = `🔍 ${tr("search_results", ctx)} ${tagList}\n${tr("tags_page", ctx)} ${result.pageNumber}/${result.totalPages} (${result.totalCount} ${tr("tags_total", ctx)})\n\n`;
 
     for (const img of result.items) {
       const artists =
@@ -172,27 +172,38 @@ async function performSearch(ctx: Context, tags: string[], page: number) {
         InlineKeyboard.text(`🖼️ Image ${img.id}`, `img_detail:${img.id}`),
       ]);
       const imgKb = InlineKeyboard.from(buttons);
-      imgKb.row().text(`🏠 ${tr("btn_back_to_menu", ctx)}`, "cmd:main");
+      imgKb.row().text(`${tr("btn_back_to_menu", ctx)}`, "cmd:main");
       if (result.hasPreviousPage || result.hasNextPage) {
         imgKb.row();
         if (result.hasPreviousPage)
-          imgKb.text("◀️ Prev", `search_page:${tags.join(",")}:${page - 1}`);
+          imgKb.text(
+            `◀️ ${tr("prev_page", ctx)}`,
+            `search_page:${tags.join(",")}:${page - 1}`,
+          );
         if (result.hasNextPage)
-          imgKb.text("▶️ Next", `search_page:${tags.join(",")}:${page + 1}`);
+          imgKb.text(
+            `▶️ ${tr("next_page", ctx)}`,
+            `search_page:${tags.join(",")}:${page + 1}`,
+          );
       }
       if (ctx.callbackQuery) {
         await ctx
-          .editMessageText(text, { reply_markup: imgKb })
-          .catch(() => ctx.reply(text, { reply_markup: imgKb }));
+          .editMessageText(text, {
+            parse_mode: "Markdown",
+            reply_markup: imgKb,
+          })
+          .catch(() =>
+            ctx.reply(text, { parse_mode: "Markdown", reply_markup: imgKb }),
+          );
       } else {
-        await ctx.reply(text, { reply_markup: imgKb });
+        await ctx.reply(text, { parse_mode: "Markdown", reply_markup: imgKb });
       }
     }
   } catch (err) {
     logger.error("Search error:", err);
     await ctx.reply(tr("search_no_results", ctx), {
       reply_markup: new InlineKeyboard().text(
-        `🏠 ${tr("btn_back_to_menu", ctx)}`,
+        `${tr("btn_back_to_menu", ctx)}`,
         "cmd:main",
       ),
     });
