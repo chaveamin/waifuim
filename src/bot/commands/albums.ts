@@ -77,7 +77,7 @@ export function registerAlbums(bot: any) {
       const { isFavorited } = await import("../../db/queries.js");
       const userId = ctx.from?.id!;
       const fav = await isFavorited(userId, imageId);
-      const kb = buildMiniImageKb(imageId, fav);
+      const kb = buildMiniImageKb(imageId, fav, ctx);
       kb.row().text("🔙 Back to Album", `album_view:${albumId}`);
       await ctx.replyWithPhoto(image.url, {
         caption,

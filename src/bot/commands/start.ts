@@ -46,6 +46,12 @@ export function registerStart(bot: any) {
     }
 
     if (!payload || payload === "lang") {
+      const { getUser } = await import("../../db/queries.js");
+      const existingUser = await getUser(ctx.from?.id!);
+      if (existingUser?.language) {
+        await showMainMenu(ctx);
+        return;
+      }
       const kb = new InlineKeyboard()
         .text("🇺🇸 English", "set_lang:en")
         .text("🇮🇷 فارسی", "set_lang:fa");

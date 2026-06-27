@@ -37,7 +37,7 @@ export function registerFavorites(bot: any) {
       const userId = ctx.from?.id!;
       const fav = await isFavorited(userId, image.id);
       const caption = buildImageCaption(image, ctx);
-      const kb = buildMiniImageKb(image.id, fav);
+      const kb = buildMiniImageKb(image.id, fav, ctx);
       await ctx.replyWithPhoto(image.url, {
         caption,
         reply_markup: kb,
@@ -67,7 +67,7 @@ export function registerFavorites(bot: any) {
     try {
       const image = await getImageById(imageId);
       const fav = await isFavorited(userId, image.id);
-      const kb = buildMiniImageKb(image.id, fav);
+      const kb = buildMiniImageKb(image.id, fav, ctx);
       await ctx.editMessageReplyMarkup({ reply_markup: kb }).catch(() => {});
     } catch {}
   });
