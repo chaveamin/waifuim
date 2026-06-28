@@ -1,5 +1,5 @@
 import { Context } from "grammy";
-import { searchImages } from "../../api/waifu.js";
+import { searchImages, getAllTags } from "../../api/waifu.js";
 import { logger } from "../../utils/logger.js";
 
 export function registerInlineMode(bot: any) {
@@ -8,7 +8,29 @@ export function registerInlineMode(bot: any) {
     const offset = parseInt(ctx.inlineQuery?.offset || "0");
 
     try {
-      const tags = query ? query.split(/\s+/) : [];
+      let tags: string[] = [];
+      if (query) {
+        const allTags = await getAllTags();
+        const words = query.split(/\s+/);
+        for (const word of words) {
+          const lower = word.toLowerCase();
+          const match = allTags.find(
+            (t) =>
+              t.slug.toLowerCase() === lower || t.name.toLowerCase() === lower,
+          );
+          if (match) {
+            tags.push(match.slug);
+          } else {
+            const partial = allTags.find(
+              (t) =>
+                t.slug.toLowerCase().includes(lower) ||
+                t.name.toLowerCase().includes(lower),
+            );
+            if (partial) tags.push(partial.slug);
+          }
+        }
+      }
+
       const result = await searchImages({
         IncludedTags: tags.length ? tags : undefined,
         IsNsfw: "False",

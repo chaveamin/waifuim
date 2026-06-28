@@ -1,6 +1,6 @@
 import { Context } from "grammy";
 import { InlineKeyboard } from "grammy";
-import { getTags, searchImages } from "../../api/waifu.js";
+import { getAllTags, searchImages } from "../../api/waifu.js";
 import { getUser, isFavorited } from "../../db/queries.js";
 import { paginateArray } from "../../utils/formatters.js";
 import {
@@ -14,7 +14,7 @@ import { tr } from "../../i18n/index.js";
 export function registerTags(bot: any) {
   bot.command("tags", async (ctx: Context) => {
     try {
-      const tags = await getTags();
+      const tags = await getAllTags();
       await showTagsPage(ctx, tags, 1);
     } catch (err) {
       logger.error("Tags error:", err);
@@ -31,7 +31,7 @@ export function registerTags(bot: any) {
     const page = parseInt(ctx.match![1]);
     await ctx.answerCallbackQuery();
     try {
-      const tags = await getTags();
+      const tags = await getAllTags();
       await showTagsPage(ctx, tags, page);
     } catch (err) {
       logger.error("Tags page error:", err);

@@ -88,6 +88,28 @@ export async function getTags(name?: string): Promise<WaifuTag[]> {
   return res.items;
 }
 
+let cachedTags: WaifuTag[] | null = null;
+let cacheTime = 0;
+const CACHE_TTL = 3600_000;
+
+export async function getAllTags(): Promise<WaifuTag[]> {
+  if (cachedTags && Date.now() - cacheTime < CACHE_TTL) return cachedTags;
+  const all: WaifuTag[] = [];
+  let page = 1;
+  let hasNext = true;
+  while (hasNext) {
+    const res = await apiGet<PaginatedResponse<WaifuTag>>("/tags", {
+      Page: page,
+    });
+    all.push(...res.items);
+    hasNext = res.hasNextPage;
+    page++;
+  }
+  cachedTags = all;
+  cacheTime = Date.now();
+  return all;
+}
+
 export async function getArtists(name?: string): Promise<WaifuArtist[]> {
   const all: WaifuArtist[] = [];
   let page = 1;
