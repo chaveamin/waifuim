@@ -35,7 +35,7 @@ export function buildImageCaption(image: WaifuImage, ctx?: any): string {
     (image.isAnimated ? ` (${tFn("image_animated")})` : "") +
     `\n❤️ ${tFn("image_favorites")}: ${image.favorites}`;
   if (image.source) {
-    caption += `\n🔗 ${tFn("image_source")}: [${tr("image_source", ctx)}](${image.source})`;
+    caption += `\n🔗 [${tr("image_source", ctx)}](${image.source})`;
   }
   return caption;
 }
@@ -43,13 +43,13 @@ export function buildImageCaption(image: WaifuImage, ctx?: any): string {
 export function buildImageKb(
   imageId: number,
   isFavorited: boolean,
+  ctx: Context,
   artistId?: number,
   artistName?: string,
-  ctx?: any,
 ): InlineKeyboard {
   const kb = new InlineKeyboard()
     .text(
-      isFavorited ? "💔 Unfavorite" : "❤️ Favorite",
+      isFavorited ? tr("btn_unfav", ctx) : tr("btn_fav", ctx),
       `fav_toggle:${imageId}`,
     )
     .text("📚 Albums", `pick_album:${imageId}`)
@@ -63,7 +63,7 @@ export function buildImageKb(
   kb.text("🎲 Random", "cmd:random")
     .text("🔍 Search", "cmd:search")
     .row()
-    .text(tr("btn_menu", ctx), "cmd:main");
+    .text(ctx ? tr("btn_menu", ctx) : "🏠 Menu", "cmd:main");
   return kb;
 }
 

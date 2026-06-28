@@ -70,7 +70,7 @@ export function registerArtists(bot: any) {
           const img = result.items[0];
           const fav = await isFavorited(userId, img.id);
           const caption = buildImageCaption(img, ctx);
-          const kb = buildImageKb(img.id, fav, artistId, artistName);
+          const kb = buildImageKb(img.id, fav, ctx, artistId, artistName);
           await ctx.replyWithPhoto(img.url, {
             caption,
             reply_markup: kb,
@@ -144,7 +144,7 @@ export function registerArtists(bot: any) {
       const img = result.items[0];
       const fav = await isFavorited(userId, img.id);
       const caption = buildImageCaption(img, ctx);
-      const kb = buildImageKb(img.id, fav, artistId, artist?.name);
+      const kb = buildImageKb(img.id, fav, ctx, artistId, artist?.name);
       await ctx.replyWithPhoto(img.url, {
         caption,
         reply_markup: kb,

@@ -84,7 +84,7 @@ export function registerSearch(bot: any) {
         const img = result.items[0];
         const fav = await isFavorited(userId, img.id);
         const caption = buildImageCaption(img, ctx);
-        const kb = buildImageKb(img.id, fav);
+        const kb = buildImageKb(img.id, fav, ctx);
         await ctx.replyWithPhoto(img.url, {
           caption,
           reply_markup: kb,
@@ -161,7 +161,7 @@ async function performSearch(ctx: Context, tags: string[], page: number) {
       const img = result.items[0];
       const fav = await isFavorited(userId, img.id);
       const caption = buildImageCaption(img, ctx);
-      const kb = buildImageKb(img.id, fav);
+      const kb = buildImageKb(img.id, fav, ctx);
       await ctx.replyWithPhoto(img.url, {
         caption,
         reply_markup: kb,

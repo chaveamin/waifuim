@@ -3,7 +3,6 @@ import { cors } from "hono/cors";
 import { Bot, webhookCallback } from "grammy";
 
 declare global {
-  var __DB: any;
   var BOT_TOKEN: string;
   var ADMIN_TELEGRAM_ID: string;
   var WAIFU_API_KEY: string;

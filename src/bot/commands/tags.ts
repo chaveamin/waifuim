@@ -65,7 +65,7 @@ export function registerTags(bot: any) {
           const img = result.items[0];
           const fav = await isFavorited(userId, img.id);
           const caption = buildImageCaption(img, ctx);
-          const kb = buildImageKb(img.id, fav);
+          const kb = buildImageKb(img.id, fav, ctx);
           await ctx.replyWithPhoto(img.url, {
             caption,
             reply_markup: kb,
@@ -122,7 +122,7 @@ function showTagsPage(
 
   const kb = new InlineKeyboard();
   for (const tag of items) {
-    kb.text(`🏷️ ${tag.name}`, `search_tag:${tag.slug}`).row();
+    kb.text(`${tag.name}`, `search_tag:${tag.slug}`).row();
   }
   kb.row().text(`${tr("btn_back_to_menu", _ctx)}`, "cmd:main");
   if (totalPages > 1) {

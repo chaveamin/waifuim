@@ -26,7 +26,7 @@ export function registerImage(bot: any) {
       const userId = ctx.from?.id!;
       const fav = await isFavorited(userId, image.id);
       const caption = buildImageCaption(image, ctx);
-      const kb = buildImageKb(image.id, fav);
+      const kb = buildImageKb(image.id, fav, ctx);
       await ctx.replyWithPhoto(image.url, { caption, reply_markup: kb, parse_mode: "Markdown" });
     } catch (err) {
       logger.error("Image fetch error:", err);
@@ -46,7 +46,7 @@ export function registerImage(bot: any) {
       const userId = ctx.from?.id!;
       const fav = await isFavorited(userId, image.id);
       const caption = buildImageCaption(image, ctx);
-      const kb = buildImageKb(image.id, fav);
+      const kb = buildImageKb(image.id, fav, ctx);
       await ctx.replyWithPhoto(image.url, { caption, reply_markup: kb, parse_mode: "Markdown" });
     } catch (err) {
       logger.error("Image detail error:", err);

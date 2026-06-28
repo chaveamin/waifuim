@@ -29,7 +29,7 @@ export function registerRandom(bot: any) {
       const image = result.items[0];
       const fav = await isFavorited(userId, image.id);
       const caption = buildImageCaption(image, ctx);
-      const kb = buildImageKb(image.id, fav);
+      const kb = buildImageKb(image.id, fav, ctx);
       await ctx.replyWithPhoto(image.url, { caption, reply_markup: kb, parse_mode: "Markdown" });
     } catch (err) {
       logger.error("Random image error:", err);
