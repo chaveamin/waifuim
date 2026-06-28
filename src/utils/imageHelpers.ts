@@ -52,7 +52,7 @@ export function buildImageKb(
       isFavorited ? tr("btn_unfav", ctx) : tr("btn_fav", ctx),
       `fav_toggle:${imageId}`,
     )
-    .text("📚 Albums", `pick_album:${imageId}`)
+    .text(tr("btn_albums_pick", ctx), `pick_album:${imageId}`)
     .row();
   if (artistId) {
     kb.text(

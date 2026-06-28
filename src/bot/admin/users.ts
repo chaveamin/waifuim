@@ -17,14 +17,14 @@ export function registerAdminUsers(bot: any) {
   bot.callbackQuery("admin:users", async (ctx: Context) => {
     await ctx.answerCallbackQuery();
     const users = await getAllUsers();
-    showUsersList(ctx, users, 1);
+    await showUsersList(ctx, users, 1);
   });
 
   bot.callbackQuery(/^admin_users_page:(\d+)$/, async (ctx: Context) => {
     const page = parseInt(ctx.match![1]);
     await ctx.answerCallbackQuery();
     const users = await getAllUsers();
-    showUsersList(ctx, users, page);
+    await showUsersList(ctx, users, page);
   });
 
   bot.callbackQuery(/^admin_user:(\d+)$/, async (ctx: Context) => {
@@ -96,7 +96,7 @@ export function registerAdminUsers(bot: any) {
   });
 }
 
-function showUsersList(ctx: Context, users: any[], page: number) {
+async function showUsersList(ctx: Context, users: any[], page: number) {
   const { items, totalPages } = paginateArray(users, page, USERS_PER_PAGE);
 
   let text = `${tr("admin_users", ctx)} (${tr("tags_page", ctx)} ${page}/${totalPages}, ${users.length} total)\n\n`;
@@ -127,9 +127,9 @@ function showUsersList(ctx: Context, users: any[], page: number) {
     .text(tr("btn_menu", ctx), "cmd:main");
 
   if (ctx.callbackQuery) {
-    ctx.editMessageText(text, { reply_markup: kb }).catch(() => {});
+    await ctx.editMessageText(text, { reply_markup: kb }).catch(() => {});
   } else {
-    ctx.reply(text, { reply_markup: kb });
+    await ctx.reply(text, { reply_markup: kb });
   }
 }
 
@@ -177,8 +177,8 @@ async function showUserDetail(ctx: Context, telegramId: number) {
     .text(tr("admin_panel_title", ctx), "admin:back");
 
   if (ctx.callbackQuery) {
-    ctx.editMessageText(text, { reply_markup: kb }).catch(() => {});
+    await ctx.editMessageText(text, { reply_markup: kb }).catch(() => {});
   } else {
-    ctx.reply(text, { reply_markup: kb });
+    await ctx.reply(text, { reply_markup: kb });
   }
 }

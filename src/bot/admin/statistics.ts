@@ -65,9 +65,11 @@ async function showDetailedStats(ctx: Context) {
   const kb = new InlineKeyboard()
     .text(tr("btn_back", ctx), "admin:back")
     .text(tr("btn_menu", ctx), "cmd:main");
-  if (ctx.callbackQuery)
-    ctx
+  if (ctx.callbackQuery) {
+    await ctx
       .editMessageText(text, { reply_markup: kb })
       .catch(() => ctx.reply(text, { reply_markup: kb }));
-  else ctx.reply(text, { reply_markup: kb });
+  } else {
+    await ctx.reply(text, { reply_markup: kb });
+  }
 }

@@ -1,42 +1,29 @@
 import { Context } from "grammy";
-import { searchImages, getAllTags } from "../../api/waifu.js";
+import { searchImages } from "../../api/waifu.js";
+import { getUser } from "../../db/queries.js";
+import { buildSearchParams } from "../../utils/imageHelpers.js";
 import { logger } from "../../utils/logger.js";
 
 export function registerInlineMode(bot: any) {
   bot.on("inline_query", async (ctx: Context) => {
     const query = ctx.inlineQuery?.query?.trim() || "";
     const offset = parseInt(ctx.inlineQuery?.offset || "0");
+    const userId = ctx.from?.id;
 
     try {
-      let tags: string[] = [];
-      if (query) {
-        const allTags = await getAllTags();
-        const words = query.split(/\s+/);
-        for (const word of words) {
-          const lower = word.toLowerCase();
-          const match = allTags.find(
-            (t) =>
-              t.slug.toLowerCase() === lower || t.name.toLowerCase() === lower,
-          );
-          if (match) {
-            tags.push(match.slug);
-          } else {
-            const partial = allTags.find(
-              (t) =>
-                t.slug.toLowerCase().includes(lower) ||
-                t.name.toLowerCase().includes(lower),
-            );
-            if (partial) tags.push(partial.slug);
-          }
-        }
-      }
+      const tags = query
+        ? query.split(/\s+/).map((t) => t.toLowerCase())
+        : undefined;
 
-      const result = await searchImages({
-        IncludedTags: tags.length ? tags : undefined,
-        IsNsfw: "False",
+      const user = userId ? await getUser(userId) : undefined;
+
+      const params = buildSearchParams(user, {
+        IncludedTags: tags,
         Page: Math.floor(offset / 5) + 1,
         PageSize: 5,
       });
+
+      const result = await searchImages(params);
 
       const articles = result.items.map((img) => {
         const artists = img.artists.map((a) => a.name).join(", ") || "Unknown";

@@ -1,22 +1,49 @@
-import { Context } from "grammy";
+import { Context, NextFunction } from "grammy";
 import { InlineKeyboard } from "grammy";
-import {
-  getAllNonBannedUsers,
-  logBroadcast,
-} from "../../db/queries.js";
+import { getAllNonBannedUsers, logBroadcast } from "../../db/queries.js";
 
 const broadcastState = new Map<number, { step: "waiting"; preview: string }>();
 
 export function registerAdminBroadcast(bot: any) {
+  bot.on("message:text", async (ctx: Context, next: NextFunction) => {
+    const userId = ctx.from?.id;
+    if (!userId) return next();
+
+    const state = broadcastState.get(userId);
+
+    if (state && state.step === "waiting") {
+      const text = ctx.message?.text;
+
+      if (!text || text.startsWith("/")) return next();
+
+      state.preview = text;
+
+      const kb = new InlineKeyboard()
+        .text("✅ Send Broadcast", "broadcast:confirm")
+        .text("❌ Cancel", "broadcast:cancel");
+
+      await ctx.reply(
+        `<b>Broadcast Preview:</b>\n\n${text}\n\n<i>Send this to all users?</i>`,
+        { parse_mode: "HTML", reply_markup: kb },
+      );
+      return;
+    }
+
+    return next();
+  });
+
   bot.callbackQuery("admin:broadcast", async (ctx: Context) => {
     const userId = ctx.from?.id;
     if (!userId) return;
     await ctx.answerCallbackQuery();
     broadcastState.set(userId, { step: "waiting", preview: "" });
-    const text = "📢 Send the broadcast message to all users.\n\nThe message will be sent as-is. Supports HTML formatting.\nSend /cancel to abort.";
+    const text =
+      "📢 Send the broadcast message to all users.\n\nThe message will be sent as-is. Supports HTML formatting.\nSend /cancel to abort.";
     const kb = new InlineKeyboard().text("❌ Cancel", "admin:back");
     if (ctx.callbackQuery) {
-      await ctx.editMessageText(text, { reply_markup: kb }).catch(() => ctx.reply(text, { reply_markup: kb }));
+      await ctx
+        .editMessageText(text, { reply_markup: kb })
+        .catch(() => ctx.reply(text, { reply_markup: kb }));
     } else {
       await ctx.reply(text, { reply_markup: kb });
     }
@@ -30,9 +57,14 @@ export function registerAdminBroadcast(bot: any) {
     const state = broadcastState.get(userId);
     if (!state?.preview) {
       const noMsg = "No broadcast message found.";
-      const noKb = new InlineKeyboard().text("🔙 Back to Admin Panel", "admin:back");
+      const noKb = new InlineKeyboard().text(
+        "🔙 Back to Admin Panel",
+        "admin:back",
+      );
       if (ctx.callbackQuery) {
-        await ctx.editMessageText(noMsg, { reply_markup: noKb }).catch(() => ctx.reply(noMsg, { reply_markup: noKb }));
+        await ctx
+          .editMessageText(noMsg, { reply_markup: noKb })
+          .catch(() => ctx.reply(noMsg, { reply_markup: noKb }));
       } else {
         await ctx.reply(noMsg, { reply_markup: noKb });
       }
@@ -45,7 +77,9 @@ export function registerAdminBroadcast(bot: any) {
 
     for (const user of users) {
       try {
-        await ctx.api.sendMessage(user.telegram_id, state.preview, { parse_mode: "HTML" });
+        await ctx.api.sendMessage(user.telegram_id, state.preview, {
+          parse_mode: "HTML",
+        });
         sent++;
       } catch {
         failed++;
@@ -64,7 +98,9 @@ export function registerAdminBroadcast(bot: any) {
       `❌ Failed: ${failed}\n` +
       `👥 Total: ${users.length}`;
     if (ctx.callbackQuery) {
-      await ctx.editMessageText(resultText, { reply_markup: kb }).catch(() => ctx.reply(resultText, { reply_markup: kb }));
+      await ctx
+        .editMessageText(resultText, { reply_markup: kb })
+        .catch(() => ctx.reply(resultText, { reply_markup: kb }));
     } else {
       await ctx.reply(resultText, { reply_markup: kb });
     }
@@ -76,9 +112,14 @@ export function registerAdminBroadcast(bot: any) {
     await ctx.answerCallbackQuery();
     broadcastState.delete(userId);
     const cancelText = "❌ Broadcast cancelled.";
-    const cancelKb = new InlineKeyboard().text("🔙 Back to Admin Panel", "admin:back");
+    const cancelKb = new InlineKeyboard().text(
+      "🔙 Back to Admin Panel",
+      "admin:back",
+    );
     if (ctx.callbackQuery) {
-      await ctx.editMessageText(cancelText, { reply_markup: cancelKb }).catch(() => ctx.reply(cancelText, { reply_markup: cancelKb }));
+      await ctx
+        .editMessageText(cancelText, { reply_markup: cancelKb })
+        .catch(() => ctx.reply(cancelText, { reply_markup: cancelKb }));
     } else {
       await ctx.reply(cancelText, { reply_markup: cancelKb });
     }

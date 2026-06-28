@@ -121,7 +121,7 @@ export const messages: Record<string, Record<Lang, string>> = {
   btn_all_artists: { en: "🎨 All Artists", fa: "🎨 همه هنرمندان" },
   btn_fav: { en: "❤️ Favorite", fa: "❤️ علاقه‌مندی" },
   btn_unfav: { en: "💔 Unfavorite", fa: "💔 حذف از علاقه‌مندی" },
-  btn_albums_pick: { en: "📚 Albums", fa: "📚 آلبوم‌ها" },
+  btn_albums_pick: { en: "📚 Add to Album", fa: "📚 افزودن به آلبوم" },
   btn_create_album: { en: "➕ Create Album", fa: "➕ ساخت آلبوم" },
   btn_my_albums: { en: "📚 My Albums", fa: "📚 آلبوم‌های من" },
   btn_add_image: { en: "➕ Add Image", fa: "➕ افزودن تصویر" },
