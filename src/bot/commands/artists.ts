@@ -17,11 +17,7 @@ export function registerArtists(bot: any) {
   bot.command("artists", async (ctx: Context) => {
     try {
       const artists = await getArtists();
-      const chatId = ctx.chat?.id;
-      const msgId = ctx.message?.message_id;
-      if (!chatId || !msgId) return;
-
-      showArtistsPage(artists, 1, ctx, chatId, msgId);
+      await showArtistsPage(ctx, artists, 1);
     } catch (err) {
       logger.error("Artists error:", err);
       await ctx.reply("Failed to fetch artists.", {
@@ -36,15 +32,9 @@ export function registerArtists(bot: any) {
   bot.callbackQuery(/^artists_page:(\d+)$/, async (ctx: Context) => {
     const page = parseInt(ctx.match![1]);
     await ctx.answerCallbackQuery();
-
     try {
       const artists = await getArtists();
-      const msg = ctx.callbackQuery?.message;
-      const chatId = msg?.chat.id;
-      const msgId = msg?.message_id;
-      if (!chatId || !msgId) return;
-
-      showArtistsPage(artists, page, ctx, chatId, msgId);
+      await showArtistsPage(ctx, artists, page);
     } catch (err) {
       logger.error("Artists page error:", err);
     }
@@ -241,34 +231,33 @@ async function searchArtistByName(ctx: Context, query: string) {
   }
 }
 
-function showArtistsPage(
-  artists: any[],
-  page: number,
-  ctx: Context,
-  chatId: number,
-  msgId: number,
-) {
+async function showArtistsPage(ctx: Context, artists: any[], page: number) {
   const { items, totalPages } = paginateArray(artists, page, 15);
   let text = `🎨 Artists (Page ${page}/${totalPages}, ${artists.length} total):\n\n`;
   for (const artist of items) {
-    text += `• ${artist.name} (ID: ${artist.id})\n`;
+    text += `🎨 ${artist.name} (ID: ${artist.id})\n`;
   }
 
   const kb = new InlineKeyboard();
   for (const artist of items) {
     kb.text(`🎨 ${artist.name}`, `artist_images:${artist.id}`).row();
   }
+
   kb.row().text("🔍 Search Artist", "artists:search");
   if (totalPages > 1) {
     kb.row();
     if (page > 1)
-      kb.text(`◀️ ${tr("prev_page", ctx)}`, `artists_page:${page - 1}`);
+      kb.text(`⬅️ ${tr("prev_page", ctx)}`, `artists_page:${page - 1}`);
     if (page < totalPages)
-      kb.text(`▶️ ${tr("next_page", ctx)}`, `artists_page:${page + 1}`);
+      kb.text(`➡️ ${tr("next_page", ctx)}`, `artists_page:${page + 1}`);
   }
   kb.row().text(`${tr("btn_back_to_menu", ctx)}`, "cmd:main");
 
-  ctx.api
-    .editMessageText(chatId, msgId, text, { reply_markup: kb })
-    .catch(() => {});
+  if (ctx.callbackQuery) {
+    await ctx
+      .editMessageText(text, { reply_markup: kb })
+      .catch(() => ctx.reply(text, { reply_markup: kb }));
+  } else {
+    await ctx.reply(text, { reply_markup: kb });
+  }
 }

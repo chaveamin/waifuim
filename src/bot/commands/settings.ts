@@ -160,6 +160,10 @@ async function showSettings(ctx: Context, telegramId: number) {
       "set_animation:any",
     )
     .row();
+  kb.text(
+    lang === "fa" ? "🇮🇷 فارسی ✅" : "🇺🇸 English ✅",
+    "set_lang:pick",
+  ).row();
   kb.text(tr("btn_back_to_menu", ctx), "cmd:main");
 
   if (ctx.callbackQuery) {

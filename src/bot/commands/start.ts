@@ -45,13 +45,7 @@ export function registerStart(bot: any) {
       return;
     }
 
-    if (!payload || payload === "lang") {
-      const { getUser } = await import("../../db/queries.js");
-      const existingUser = await getUser(ctx.from?.id!);
-      if (existingUser?.language) {
-        await showMainMenu(ctx);
-        return;
-      }
+    if (payload === "lang") {
       const kb = new InlineKeyboard()
         .text("🇺🇸 English", "set_lang:en")
         .text("🇮🇷 فارسی", "set_lang:fa");
@@ -59,12 +53,29 @@ export function registerStart(bot: any) {
       return;
     }
 
+    if (!payload) {
+      await showMainMenu(ctx);
+      return;
+    }
+
     await showMainMenu(ctx);
   });
 
-  bot.callbackQuery(/^set_lang:(en|fa)$/, async (ctx: Context) => {
-    const lang = ctx.match![1] as "en" | "fa";
+  bot.callbackQuery(/^set_lang:(en|fa|pick)$/, async (ctx: Context) => {
+    const choice = ctx.match![1];
     await ctx.answerCallbackQuery();
+
+    if (choice === "pick") {
+      const kb = new InlineKeyboard()
+        .text("🇺🇸 English", "set_lang:en")
+        .text("🇮🇷 فارسی", "set_lang:fa");
+      await ctx.editMessageText(tr("choose_lang", ctx), { reply_markup: kb }).catch(() =>
+        ctx.reply(tr("choose_lang", ctx), { reply_markup: kb }),
+      );
+      return;
+    }
+
+    const lang = choice as "en" | "fa";
     const userId = ctx.from?.id;
     if (!userId) return;
     await setLanguage(userId, lang);

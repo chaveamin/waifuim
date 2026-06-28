@@ -63,7 +63,7 @@ export function buildImageKb(
   kb.text("🎲 Random", "cmd:random")
     .text("🔍 Search", "cmd:search")
     .row()
-    .text(ctx ? tr("btn_menu", ctx) : "🏠 Menu", "cmd:main");
+    .text(tr("btn_menu", ctx), "cmd:main");
   return kb;
 }
 

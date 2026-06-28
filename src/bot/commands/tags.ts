@@ -15,12 +15,7 @@ export function registerTags(bot: any) {
   bot.command("tags", async (ctx: Context) => {
     try {
       const tags = await getTags();
-      const chatId = ctx.chat?.id;
-      const msgId = ctx.message?.message_id;
-      if (!chatId || !msgId) return;
-
-      await ctx.reply("🏷️ Loading tags...");
-      showTagsPage(ctx, tags, 1, chatId, msgId);
+      await showTagsPage(ctx, tags, 1);
     } catch (err) {
       logger.error("Tags error:", err);
       await ctx.reply("Failed to fetch tags.", {
@@ -35,15 +30,9 @@ export function registerTags(bot: any) {
   bot.callbackQuery(/^tags_page:(\d+)$/, async (ctx: Context) => {
     const page = parseInt(ctx.match![1]);
     await ctx.answerCallbackQuery();
-
     try {
       const tags = await getTags();
-      const msg = ctx.callbackQuery?.message;
-      const chatId = msg?.chat.id;
-      const msgId = msg?.message_id;
-      if (!chatId || !msgId) return;
-
-      showTagsPage(ctx, tags, page, chatId, msgId);
+      await showTagsPage(ctx, tags, page);
     } catch (err) {
       logger.error("Tags page error:", err);
     }
@@ -107,32 +96,33 @@ export function registerTags(bot: any) {
   });
 }
 
-function showTagsPage(
-  _ctx: Context,
-  tags: any[],
-  page: number,
-  chatId: number,
-  msgId: number,
-) {
+// 3. Replace the showTagsPage helper function
+async function showTagsPage(ctx: Context, tags: any[], page: number) {
   const { items, totalPages } = paginateArray(tags, page, 20);
   let text = `🏷️ Tags (Page ${page}/${totalPages}, ${tags.length} total):\n\n`;
   for (const tag of items) {
-    text += `• ${tag.name}\n`;
+    text += `🏷️ ${tag.name}\n`;
   }
 
   const kb = new InlineKeyboard();
   for (const tag of items) {
-    kb.text(`${tag.name}`, `search_tag:${tag.slug}`).row();
+    kb.text(`🏷️ ${tag.name}`, `search_tag:${tag.slug}`).row();
   }
-  kb.row().text(`${tr("btn_back_to_menu", _ctx)}`, "cmd:main");
+  kb.row().text(`${tr("btn_back_to_menu", ctx)}`, "cmd:main");
+
   if (totalPages > 1) {
     if (page > 1)
-      kb.text(`◀️ ${tr("prev_page", _ctx)}`, `tags_page:${page - 1}`);
+      kb.text(`⬅️ ${tr("prev_page", ctx)}`, `tags_page:${page - 1}`);
     if (page < totalPages)
-      kb.text(`▶️ ${tr("next_page", _ctx)}`, `tags_page:${page + 1}`);
+      kb.text(`➡️ ${tr("next_page", ctx)}`, `tags_page:${page + 1}`);
   }
 
-  _ctx.api
-    .editMessageText(chatId, msgId, text, { reply_markup: kb })
-    .catch(() => {});
+  // Handle both commands and callback queries safely
+  if (ctx.callbackQuery) {
+    await ctx
+      .editMessageText(text, { reply_markup: kb })
+      .catch(() => ctx.reply(text, { reply_markup: kb }));
+  } else {
+    await ctx.reply(text, { reply_markup: kb });
+  }
 }
