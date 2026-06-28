@@ -51,6 +51,7 @@ app.get("/init-db", async (c) => {
       orientation TEXT DEFAULT 'any',
       animation_mode TEXT DEFAULT 'any',
       language TEXT DEFAULT 'en',
+      send_mode TEXT DEFAULT 'photo',
       daily_subscribed INTEGER DEFAULT 0,
       daily_hour INTEGER DEFAULT 9,
       daily_minute INTEGER DEFAULT 0,
@@ -99,7 +100,17 @@ app.get("/init-db", async (c) => {
     for (const sql of stmts) {
       await db.prepare(sql).run();
     }
-    return c.json({ status: "ok", message: "Database initialized" });
+    try {
+      await db
+        .prepare(`ALTER TABLE users ADD COLUMN send_mode TEXT DEFAULT 'photo'`)
+        .run();
+    } catch (e) {
+      console.log("Column send_mode likely already exists.");
+    }
+    return c.json({
+      status: "ok",
+      message: "Database initialized and migrated",
+    });
   } catch (err) {
     return c.json({ status: "error", message: String(err) }, 500);
   }
@@ -131,8 +142,10 @@ app.all("/webhook", async (c) => {
   const { registerGroup } = await import("../bot/commands/group.js");
   const { registerDaily } = await import("../bot/commands/daily.js");
   const { registerAlbums } = await import("../bot/commands/albums.js");
-  const { registerLeaderboard } = await import("../bot/commands/leaderboard.js");
-  const { registerCallbackHandlers } = await import("../bot/handlers/callback.js");
+  const { registerLeaderboard } =
+    await import("../bot/commands/leaderboard.js");
+  const { registerCallbackHandlers } =
+    await import("../bot/handlers/callback.js");
   const { registerInlineMode } = await import("../bot/handlers/inline.js");
   const { registerCancelHandler } = await import("../bot/handlers/cancel.js");
   const { registerAdminPanel } = await import("../bot/admin/panel.js");

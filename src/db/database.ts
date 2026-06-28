@@ -49,6 +49,7 @@ function initSchema() {
       animation_mode TEXT DEFAULT 'any',
       language TEXT DEFAULT 'en',
       daily_subscribed INTEGER DEFAULT 0,
+      send_mode TEXT DEFAULT 'photo',
       daily_hour INTEGER DEFAULT 9,
       daily_minute INTEGER DEFAULT 0,
       last_daily_sent TEXT,
@@ -58,15 +59,27 @@ function initSchema() {
   `);
 
   const colResult = db.exec("PRAGMA table_info(users)");
-  const colNames = colResult.length ? colResult[0].values.map((r: any[]) => String(r[1])) : [];
-  if (!colNames.includes("image_count")) db.run("ALTER TABLE users ADD COLUMN image_count INTEGER DEFAULT 1");
-  if (!colNames.includes("orientation")) db.run("ALTER TABLE users ADD COLUMN orientation TEXT DEFAULT 'any'");
-  if (!colNames.includes("animation_mode")) db.run("ALTER TABLE users ADD COLUMN animation_mode TEXT DEFAULT 'any'");
-  if (!colNames.includes("language")) db.run("ALTER TABLE users ADD COLUMN language TEXT DEFAULT 'en'");
-  if (!colNames.includes("daily_subscribed")) db.run("ALTER TABLE users ADD COLUMN daily_subscribed INTEGER DEFAULT 0");
-  if (!colNames.includes("daily_hour")) db.run("ALTER TABLE users ADD COLUMN daily_hour INTEGER DEFAULT 9");
-  if (!colNames.includes("daily_minute")) db.run("ALTER TABLE users ADD COLUMN daily_minute INTEGER DEFAULT 0");
-  if (!colNames.includes("last_daily_sent")) db.run("ALTER TABLE users ADD COLUMN last_daily_sent TEXT");
+  const colNames = colResult.length
+    ? colResult[0].values.map((r: any[]) => String(r[1]))
+    : [];
+  if (!colNames.includes("image_count"))
+    db.run("ALTER TABLE users ADD COLUMN image_count INTEGER DEFAULT 1");
+  if (!colNames.includes("orientation"))
+    db.run("ALTER TABLE users ADD COLUMN orientation TEXT DEFAULT 'any'");
+  if (!colNames.includes("animation_mode"))
+    db.run("ALTER TABLE users ADD COLUMN animation_mode TEXT DEFAULT 'any'");
+  if (!colNames.includes("language"))
+    db.run("ALTER TABLE users ADD COLUMN language TEXT DEFAULT 'en'");
+  if (!colNames.includes("send_mode"))
+    db.run("ALTER TABLE users ADD COLUMN send_mode TEXT DEFAULT 'photo'");
+  if (!colNames.includes("daily_subscribed"))
+    db.run("ALTER TABLE users ADD COLUMN daily_subscribed INTEGER DEFAULT 0");
+  if (!colNames.includes("daily_hour"))
+    db.run("ALTER TABLE users ADD COLUMN daily_hour INTEGER DEFAULT 9");
+  if (!colNames.includes("daily_minute"))
+    db.run("ALTER TABLE users ADD COLUMN daily_minute INTEGER DEFAULT 0");
+  if (!colNames.includes("last_daily_sent"))
+    db.run("ALTER TABLE users ADD COLUMN last_daily_sent TEXT");
   if (colNames.includes("nsfw_enabled") && !colNames.includes("nsfw_mode")) {
     db.run("ALTER TABLE users ADD COLUMN nsfw_mode TEXT DEFAULT 'sfw'");
     db.run("UPDATE users SET nsfw_mode = 'nsfw' WHERE nsfw_enabled = 1");

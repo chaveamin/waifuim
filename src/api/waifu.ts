@@ -7,6 +7,8 @@ import type {
   ImageSearchParams,
   PublicStats,
 } from "./types.js";
+import { tr } from "../i18n/index.js";
+import { Context } from "grammy";
 
 const BASE = config.waifuApiBase;
 
@@ -65,10 +67,13 @@ export async function getImageById(id: number): Promise<WaifuImage> {
   return apiGet<WaifuImage>(`/images/${id}`);
 }
 
-export async function getRandomImage(options?: {
-  tags?: string[];
-  nsfw?: "True" | "False" | "All";
-}): Promise<WaifuImage> {
+export async function getRandomImage(
+  ctx: Context,
+  options?: {
+    tags?: string[];
+    nsfw?: "True" | "False" | "All";
+  },
+): Promise<WaifuImage> {
   const params: ImageSearchParams = {
     PageSize: 1,
     Page: 1,
@@ -77,7 +82,7 @@ export async function getRandomImage(options?: {
   if (options?.nsfw) params.IsNsfw = options.nsfw;
   else params.IsNsfw = "False";
   const res = await searchImages(params);
-  if (!res.items.length) throw new Error("No images found");
+  if (!res.items.length) throw new Error(tr("random_no_images", ctx));
   return res.items[0];
 }
 

@@ -10,6 +10,7 @@ import {
 } from "../../utils/imageHelpers.js";
 import { logger } from "../../utils/logger.js";
 import { tr } from "../../i18n/index.js";
+import { replyWithMediaUniversal } from "../../utils/imageHelpers.js";
 
 export function registerTags(bot: any) {
   bot.command("tags", async (ctx: Context) => {
@@ -55,7 +56,7 @@ export function registerTags(bot: any) {
           const fav = await isFavorited(userId, img.id);
           const caption = buildImageCaption(img, ctx);
           const kb = buildImageKb(img.id, fav, ctx);
-          await ctx.replyWithPhoto(img.url, {
+          await replyWithMediaUniversal(ctx, user, img.url, {
             caption,
             reply_markup: kb,
             parse_mode: "Markdown",

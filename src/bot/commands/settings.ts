@@ -6,6 +6,7 @@ import {
   setImageCount,
   setOrientation,
   setAnimationMode,
+  setSendMode,
 } from "../../db/queries.js";
 import { config } from "../../config.js";
 import { tr, getLang } from "../../i18n/index.js";
@@ -61,6 +62,15 @@ export function registerSettings(bot: any) {
     await showSettings(ctx, userId);
   });
 
+  bot.callbackQuery(/^set_send_mode:(.+)$/, async (ctx: Context) => {
+    const mode = ctx.match![1];
+    await ctx.answerCallbackQuery();
+    const userId = ctx.from?.id;
+    if (!userId) return;
+    if (["photo", "document"].includes(mode)) await setSendMode(userId, mode);
+    await showSettings(ctx, userId);
+  });
+
   bot.callbackQuery("toggle_nsfw", async (ctx: Context) => {
     const userId = ctx.from?.id;
     if (!userId) return;
@@ -75,6 +85,7 @@ async function showSettings(ctx: Context, telegramId: number) {
   const count = user?.image_count ?? 1;
   const orientation = user?.orientation ?? "any";
   const animation = user?.animation_mode ?? "any";
+  const sendMode = user?.send_mode ?? "photo";
   const lang = getLang(ctx);
 
   const nsfwLabel = config.nsfwAllowed
@@ -160,6 +171,14 @@ async function showSettings(ctx: Context, telegramId: number) {
       "set_animation:any",
     )
     .row();
+
+  kb.text(sendMode === "photo" ? "✅ Photo" : "Photo", "set_send_mode:photo")
+    .text(
+      sendMode === "document" ? "✅ File" : "File",
+      "set_send_mode:document",
+    )
+    .row();
+
   kb.text(
     lang === "fa" ? "🇮🇷 فارسی ✅" : "🇺🇸 English ✅",
     "set_lang:pick",

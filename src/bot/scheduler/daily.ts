@@ -1,7 +1,10 @@
 import { Bot } from "grammy";
 import { searchImages } from "../../api/waifu.js";
 import { getDailySubscribers, markDailySent } from "../../db/queries.js";
-import { buildImageCaption, buildSearchParams } from "../../utils/imageHelpers.js";
+import {
+  buildImageCaption,
+  buildSearchParams,
+} from "../../utils/imageHelpers.js";
 import { logger } from "../../utils/logger.js";
 
 export function startDailyScheduler(bot: Bot) {
@@ -39,10 +42,16 @@ async function sendDailyImages(bot: Bot) {
       const image = result.items[0];
       const caption = buildImageCaption(image);
 
-      await bot.api.sendPhoto(user.telegram_id, image.url, {
-        caption: `🌅 Good Morning! Here's your daily waifu.\n\n${caption}`,
-        parse_mode: "Markdown",
-      });
+      const dailyOptions = {
+        caption: `Good Morning! Here's your daily waifu.\n\n${caption}`,
+        parse_mode: "Markdown" as const,
+      };
+
+      if (user.send_mode === "document") {
+        await bot.api.sendDocument(user.telegram_id, image.url, dailyOptions);
+      } else {
+        await bot.api.sendPhoto(user.telegram_id, image.url, dailyOptions);
+      }
 
       await markDailySent(user.telegram_id);
       logger.info(`Daily image sent to ${user.telegram_id}`);

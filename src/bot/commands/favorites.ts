@@ -4,6 +4,7 @@ import {
   getFavoriteCount,
   getUserFavorites,
   isFavorited,
+  getUser,
 } from "../../db/queries.js";
 import { getImageById } from "../../api/waifu.js";
 import {
@@ -12,6 +13,7 @@ import {
 } from "../../utils/imageHelpers.js";
 import { tr } from "../../i18n/index.js";
 import { logger } from "../../utils/logger.js";
+import { replyWithMediaUniversal } from "../../utils/imageHelpers.js";
 
 export function registerFavorites(bot: any) {
   bot.command("favorites", async (ctx: Context) => {
@@ -35,10 +37,11 @@ export function registerFavorites(bot: any) {
     try {
       const image = await getImageById(imageId);
       const userId = ctx.from?.id!;
+      const user = await getUser(userId);
       const fav = await isFavorited(userId, image.id);
       const caption = buildImageCaption(image, ctx);
       const kb = buildMiniImageKb(image.id, fav, ctx);
-      await ctx.replyWithPhoto(image.url, {
+      await replyWithMediaUniversal(ctx, user, image.url, {
         caption,
         reply_markup: kb,
         parse_mode: "Markdown",

@@ -121,3 +121,17 @@ export function buildSearchParams(
 
   return params;
 }
+
+export async function replyWithMediaUniversal(
+  ctx: Context,
+  user: DbUser | undefined,
+  url: string,
+  options: any,
+) {
+  const isDocument = user?.send_mode === "document";
+  if (isDocument) {
+    return await ctx.replyWithDocument(url, options);
+  } else {
+    return await ctx.replyWithPhoto(url, options);
+  }
+}

@@ -1,10 +1,11 @@
 import { Context } from "grammy";
 import { InlineKeyboard } from "grammy";
 import { getImageById } from "../../api/waifu.js";
-import { isFavorited } from "../../db/queries.js";
+import { isFavorited, getUser } from "../../db/queries.js";
 import { buildImageCaption, buildImageKb } from "../../utils/imageHelpers.js";
 import { tr } from "../../i18n/index.js";
 import { logger } from "../../utils/logger.js";
+import { replyWithMediaUniversal } from "../../utils/imageHelpers.js";
 
 export function registerImage(bot: any) {
   bot.command("image", async (ctx: Context) => {
@@ -13,7 +14,10 @@ export function registerImage(bot: any) {
 
     if (!args.length || isNaN(Number(args[0]))) {
       await ctx.reply(tr("image_usage", ctx), {
-        reply_markup: new InlineKeyboard().text(tr("btn_back_to_menu", ctx), "cmd:main"),
+        reply_markup: new InlineKeyboard().text(
+          tr("btn_back_to_menu", ctx),
+          "cmd:main",
+        ),
       });
       return;
     }
@@ -24,14 +28,22 @@ export function registerImage(bot: any) {
     try {
       const image = await getImageById(id);
       const userId = ctx.from?.id!;
+      const user = await getUser(userId);
       const fav = await isFavorited(userId, image.id);
       const caption = buildImageCaption(image, ctx);
       const kb = buildImageKb(image.id, fav, ctx);
-      await ctx.replyWithPhoto(image.url, { caption, reply_markup: kb, parse_mode: "Markdown" });
+      await replyWithMediaUniversal(ctx, user, image.url, {
+        caption,
+        reply_markup: kb,
+        parse_mode: "Markdown",
+      });
     } catch (err) {
       logger.error("Image fetch error:", err);
       await ctx.reply(tr("image_not_found", ctx), {
-        reply_markup: new InlineKeyboard().text(tr("btn_back_to_menu", ctx), "cmd:main"),
+        reply_markup: new InlineKeyboard().text(
+          tr("btn_back_to_menu", ctx),
+          "cmd:main",
+        ),
       });
     }
   });
@@ -44,14 +56,22 @@ export function registerImage(bot: any) {
     try {
       const image = await getImageById(id);
       const userId = ctx.from?.id!;
+      const user = await getUser(userId);
       const fav = await isFavorited(userId, image.id);
       const caption = buildImageCaption(image, ctx);
       const kb = buildImageKb(image.id, fav, ctx);
-      await ctx.replyWithPhoto(image.url, { caption, reply_markup: kb, parse_mode: "Markdown" });
+      await replyWithMediaUniversal(ctx, user, image.url, {
+        caption,
+        reply_markup: kb,
+        parse_mode: "Markdown",
+      });
     } catch (err) {
       logger.error("Image detail error:", err);
       await ctx.reply(tr("image_not_found", ctx), {
-        reply_markup: new InlineKeyboard().text(tr("btn_back_to_menu", ctx), "cmd:main"),
+        reply_markup: new InlineKeyboard().text(
+          tr("btn_back_to_menu", ctx),
+          "cmd:main",
+        ),
       });
     }
   });

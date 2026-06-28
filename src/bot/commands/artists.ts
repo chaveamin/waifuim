@@ -10,6 +10,7 @@ import {
 } from "../../utils/imageHelpers.js";
 import { logger } from "../../utils/logger.js";
 import { tr } from "../../i18n/index.js";
+import { replyWithMediaUniversal } from "../../utils/imageHelpers.js";
 
 const searchState = new Map<number, boolean>();
 
@@ -61,7 +62,7 @@ export function registerArtists(bot: any) {
           const fav = await isFavorited(userId, img.id);
           const caption = buildImageCaption(img, ctx);
           const kb = buildImageKb(img.id, fav, ctx, artistId, artistName);
-          await ctx.replyWithPhoto(img.url, {
+          await replyWithMediaUniversal(ctx, user, img.url, {
             caption,
             reply_markup: kb,
             parse_mode: "Markdown",
@@ -135,7 +136,7 @@ export function registerArtists(bot: any) {
       const fav = await isFavorited(userId, img.id);
       const caption = buildImageCaption(img, ctx);
       const kb = buildImageKb(img.id, fav, ctx, artistId, artist?.name);
-      await ctx.replyWithPhoto(img.url, {
+      await replyWithMediaUniversal(ctx, user, img.url, {
         caption,
         reply_markup: kb,
         parse_mode: "Markdown",

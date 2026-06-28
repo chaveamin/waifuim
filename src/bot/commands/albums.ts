@@ -10,16 +10,15 @@ import {
   removeFromAlbum,
   getAlbumImages,
   getAlbumImageCount,
-  getUserAlbumsContainingImage,
+  getUser,
 } from "../../db/queries.js";
 import { getImageById } from "../../api/waifu.js";
 import {
   buildImageCaption,
   buildMiniImageKb,
 } from "../../utils/imageHelpers.js";
-import { paginateArray } from "../../utils/formatters.js";
-import { logger } from "../../utils/logger.js";
 import { tr } from "../../i18n/index.js";
+import { replyWithMediaUniversal } from "../../utils/imageHelpers.js";
 
 const createState = new Map<number, { step: "name" | "desc"; name?: string }>();
 const addState = new Map<number, number>();
@@ -76,10 +75,11 @@ export function registerAlbums(bot: any) {
       const caption = buildImageCaption(image, ctx);
       const { isFavorited } = await import("../../db/queries.js");
       const userId = ctx.from?.id!;
+      const user = await getUser(userId);
       const fav = await isFavorited(userId, imageId);
       const kb = buildMiniImageKb(imageId, fav, ctx);
       kb.row().text("Back to Album", `album_view:${albumId}`);
-      await ctx.replyWithPhoto(image.url, {
+      await replyWithMediaUniversal(ctx, user, image.url, {
         caption,
         reply_markup: kb,
         parse_mode: "Markdown",

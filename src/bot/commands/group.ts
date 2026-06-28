@@ -52,8 +52,9 @@ export async function sendGroup(ctx: Context) {
       return;
     }
 
+    const isDoc = user?.send_mode === "document";
     const media = images.map((img, i) => ({
-      type: "photo" as const,
+      type: isDoc ? ("document" as const) : ("photo" as const),
       media: img.url,
       ...(i === 0
         ? { caption: `${images.length} ${tr("group_images", ctx)}` }

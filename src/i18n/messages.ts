@@ -216,9 +216,12 @@ export const messages: Record<string, Record<Lang, string>> = {
     en: "Tap an option below to change it:",
     fa: "یک گزینه را برای تغییر لمس کنید:",
   },
+  settings_send_mode: { en: "Delivery Mode", fa: "نحوه ارسال" },
+  settings_photo: { en: "Compressed (Photo)", fa: "فشرده (عکس)" },
+  settings_document: { en: "Uncompressed (File)", fa: "اصلی (فایل)" },
   random_no_images: {
-    en: "No images found with current settings.",
-    fa: "تصویری با تنظیمات فعلی یافت نشد.",
+    en: "No images found.",
+    fa: "تصویری یافت نشد.",
   },
   random_failed: {
     en: "Failed to fetch image.",

@@ -18,6 +18,7 @@ import {
 import { logger } from "../../utils/logger.js";
 import { tr, t, getLang } from "../../i18n/index.js";
 import { showMainMenu } from "../commands/start.js";
+import { replyWithMediaUniversal } from "../../utils/imageHelpers.js";
 
 export function registerCallbackHandlers(bot: any) {
   bot.callbackQuery(/^cmd:(.+)$/, async (ctx: Context) => {
@@ -109,7 +110,7 @@ async function handleRandom(ctx: Context) {
     const fav = await isFavorited(userId, image.id);
     const caption = buildImageCaption(image, ctx);
     const kb = buildImageKb(image.id, fav, ctx);
-    await ctx.replyWithPhoto(image.url, {
+    await replyWithMediaUniversal(ctx, user, image.url, {
       caption,
       reply_markup: kb,
       parse_mode: "Markdown",
@@ -233,6 +234,7 @@ async function handleSettings(ctx: Context) {
   const count = user?.image_count ?? 1;
   const orientation = user?.orientation ?? "any";
   const animation = user?.animation_mode ?? "any";
+  const sendMode = user?.send_mode ?? "photo";
   const lang = getLang(ctx);
 
   const nsfwLabel = config.nsfwAllowed
@@ -249,6 +251,7 @@ async function handleSettings(ctx: Context) {
     `${tr("settings_images_per", ctx)}: ${count}\n` +
     `${tr("settings_orientation", ctx)}: ${orientation === "landscape" ? tr("settings_landscape", ctx) : orientation === "portrait" ? tr("settings_portrait", ctx) : tr("settings_any", ctx)}\n` +
     `${tr("settings_animation", ctx)}: ${animation === "animated" ? tr("settings_animated", ctx) : animation === "static" ? tr("settings_static", ctx) : tr("settings_any", ctx)}\n\n` +
+    `${tr("settings_send_mode", ctx)}: ${sendMode === "document" ? tr("settings_document", ctx) : tr("settings_photo", ctx)}\n\n` +
     `${tr("settings_tap_change", ctx)}`;
 
   const kb = new InlineKeyboard();
@@ -260,24 +263,26 @@ async function handleSettings(ctx: Context) {
       "set_nsfw:sfw",
     );
     kb.text(
-      nsfwMode === "any"
-        ? `✅ ${tr("settings_sfw_nsfw", ctx)}`
-        : `${tr("settings_sfw_nsfw", ctx)}`,
-      "set_nsfw:any",
-    ).row();
-    kb.text(
       nsfwMode === "nsfw"
         ? `✅ ${tr("settings_nsfw_only", ctx)}`
         : `${tr("settings_nsfw_only", ctx)}`,
       "set_nsfw:nsfw",
     ).row();
+    kb.text(
+      nsfwMode === "any"
+        ? `✅ ${tr("settings_sfw_nsfw", ctx)}`
+        : `${tr("settings_sfw_nsfw", ctx)}`,
+      "set_nsfw:any",
+    ).row();
   }
+
   kb.text(count === 1 ? `✅ 1` : "1", "set_count:1")
     .text(count === 3 ? `✅ 3` : "3", "set_count:3")
     .row()
     .text(count === 5 ? `✅ 5` : "5", "set_count:5")
     .text(count === 10 ? `✅ 10` : "10", "set_count:10")
     .row();
+
   kb.text(
     orientation === "landscape"
       ? `✅ ${tr("settings_landscape", ctx)}`
@@ -291,6 +296,7 @@ async function handleSettings(ctx: Context) {
       "set_orientation:portrait",
     )
     .row()
+
     .text(
       orientation === "any"
         ? `✅ ${tr("settings_any", ctx)}`
@@ -318,6 +324,16 @@ async function handleSettings(ctx: Context) {
       "set_animation:any",
     )
     .row();
+
+  kb.text(sendMode === "photo" ? "✅ Photo" : "Photo", "set_send_mode:photo")
+    .text(
+      sendMode === "document" ? "✅ File" : "File",
+      "set_send_mode:document",
+    )
+    .row();
+
+  kb.text(lang === "fa" ? "🇮🇷" : "🇺🇸 English", "set_lang:pick").row();
+
   kb.text(tr("btn_back_to_menu", ctx), "cmd:main");
 
   await editOrSend(ctx, text, { reply_markup: kb });
