@@ -75,13 +75,7 @@ export async function sendGroup(ctx: Context) {
       .text(tr("btn_change_settings", ctx), "cmd:settings")
       .text(tr("btn_menu", ctx), "cmd:main");
 
-    if (ctx.callbackQuery) {
-      await ctx
-        .editMessageText(text, { reply_markup: kb })
-        .catch(() => ctx.reply(text, { reply_markup: kb }));
-    } else {
-      await ctx.reply(text, { reply_markup: kb });
-    }
+    await ctx.reply(text, { reply_markup: kb });
   } catch (err) {
     logger.error(tr("group_err", ctx), err);
     await ctx.reply(tr("group_failed", ctx), {

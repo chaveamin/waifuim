@@ -66,7 +66,7 @@ export function registerImage(bot: any) {
         parse_mode: "Markdown",
       });
     } catch (err) {
-      logger.error("Image detail error:", err);
+      logger.error(tr("image_err", ctx), err);
       await ctx.reply(tr("image_not_found", ctx), {
         reply_markup: new InlineKeyboard().text(
           tr("btn_back_to_menu", ctx),

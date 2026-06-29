@@ -35,9 +35,12 @@ export function registerSearch(bot: any) {
         .row()
         .text(`${tr("btn_back_to_menu", ctx)}`, "cmd:main");
 
-      await ctx.reply("🔍 Select tags or enter /search <tag1> <tag2>:", {
-        reply_markup: kb,
-      });
+      await ctx.reply(
+        `${tr("search_tags_title", ctx)}\n/search [tag1] [tag2]`,
+        {
+          reply_markup: kb,
+        },
+      );
       return;
     }
 
@@ -72,7 +75,7 @@ export function registerSearch(bot: any) {
       const result = await searchImages(params);
 
       if (!result.items.length) {
-        await ctx.reply("No images found.", {
+        await ctx.reply(tr("random_no_images", ctx), {
           reply_markup: new InlineKeyboard().text(
             `${tr("btn_back_to_menu", ctx)}`,
             "cmd:main",
@@ -96,13 +99,13 @@ export function registerSearch(bot: any) {
         for (const img of result.items) {
           const artists =
             img.artists.map((a) => a.name).join(", ") || "Unknown";
-          text += `• 🖼️ ID: ${img.id} | 🎨 ${artists}\n`;
+          text += `• ID: ${img.id} | 🎨 ${artists}\n`;
         }
         const kb = new InlineKeyboard();
         for (const img of result.items) {
-          kb.text(`🖼️ Image ${img.id}`, `img_detail:${img.id}`).row();
+          kb.text(`${img.id}`, `img_detail:${img.id}`).row();
         }
-        kb.text("🎲 More Random", `search_random:${mode}`).text(
+        kb.text(tr("btn_randommore", ctx), `search_random:${mode}`).text(
           tr("btn_menu", ctx),
           "cmd:main",
         );
@@ -110,7 +113,7 @@ export function registerSearch(bot: any) {
       }
     } catch (err) {
       logger.error("Search random error:", err);
-      await ctx.reply("Failed to fetch image.", {
+      await ctx.reply(tr("random_failed", ctx), {
         reply_markup: new InlineKeyboard().text(
           `${tr("btn_back_to_menu", ctx)}`,
           "cmd:main",
@@ -130,7 +133,7 @@ async function performSearch(ctx: Context, tags: string[], page: number) {
     const result = await searchImages(params);
 
     if (!result.items.length) {
-      const noResult = "No images found for these tags.";
+      const noResult = tr("search_no_results", ctx);
       const noKb = new InlineKeyboard().text(
         `${tr("btn_back_to_menu", ctx)}`,
         "cmd:main",
@@ -146,7 +149,7 @@ async function performSearch(ctx: Context, tags: string[], page: number) {
     }
 
     const tagList = tags.join(", ");
-    let text = `🔍 ${tr("search_results", ctx)} ${tagList}\n${tr("tags_page", ctx)} ${result.pageNumber}/${result.totalPages} (${result.totalCount} ${tr("tags_total", ctx)})\n\n`;
+    let text = `${tr("search_results", ctx)} ${tagList}\n${tr("tags_page", ctx)} ${result.pageNumber}/${result.totalPages} (${result.totalCount} ${tr("tags_total", ctx)})\n\n`;
 
     for (const img of result.items) {
       const artists =
@@ -169,7 +172,7 @@ async function performSearch(ctx: Context, tags: string[], page: number) {
       });
     } else {
       const buttons = result.items.map((img) => [
-        InlineKeyboard.text(`🖼️ Image ${img.id}`, `img_detail:${img.id}`),
+        InlineKeyboard.text(`${img.id}`, `img_detail:${img.id}`),
       ]);
       const imgKb = InlineKeyboard.from(buttons);
       imgKb.row().text(`${tr("btn_back_to_menu", ctx)}`, "cmd:main");
@@ -177,12 +180,12 @@ async function performSearch(ctx: Context, tags: string[], page: number) {
         imgKb.row();
         if (result.hasPreviousPage)
           imgKb.text(
-            `◀️ ${tr("prev_page", ctx)}`,
+            `${tr("prev_page", ctx)}`,
             `search_page:${tags.join(",")}:${page - 1}`,
           );
         if (result.hasNextPage)
           imgKb.text(
-            `▶️ ${tr("next_page", ctx)}`,
+            `${tr("next_page", ctx)}`,
             `search_page:${tags.join(",")}:${page + 1}`,
           );
       }

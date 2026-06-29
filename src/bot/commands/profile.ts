@@ -31,7 +31,8 @@ async function showProfile(ctx: Context, telegramId: number) {
   const cmdCount = await getUserCommandCount(telegramId);
   const displayName = user.username
     ? `@${user.username}`
-    : `${user.first_name ?? ""} ${user.last_name ?? ""}`.trim() || "Unknown";
+    : `${user.first_name ?? ""} ${user.last_name ?? ""}`.trim() ||
+      tr("artist_unknown", ctx);
   const statusEmoji = user.is_banned ? "🚫" : user.is_admin ? "" : "✅";
   const statusText = user.is_banned
     ? tr("profile_banned", ctx)

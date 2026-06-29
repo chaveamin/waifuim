@@ -44,7 +44,7 @@ export function registerRandom(bot: any) {
         parse_mode: "Markdown",
       });
     } catch (err) {
-      logger.error("Random image error:", err);
+      logger.error(tr("image_random_err", ctx), err);
       await ctx.reply(tr("random_failed", ctx), {
         reply_markup: new InlineKeyboard().text(
           tr("btn_back_to_menu", ctx),

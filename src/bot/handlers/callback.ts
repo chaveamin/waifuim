@@ -128,24 +128,31 @@ async function handleRandom(ctx: Context) {
 }
 
 async function handleSearch(ctx: Context) {
-  const kb = new InlineKeyboard()
-    .text("waifu", "search_tag:waifu")
-    .text("maid", "search_tag:maid")
-    .text("marin-kitagawa", "search_tag:marin-kitagawa")
-    .row()
-    .text("mori-calliope", "search_tag:mori-calliope")
-    .text("raiden-shogun", "search_tag:raiden-shogun")
-    .text("oppai", "search_tag:oppai")
-    .row()
-    .text("selfies", "search_tag:selfies")
-    .text("uniform", "search_tag:uniform")
-    .text("game-console", "search_tag:game-console")
-    .row()
-    .text(tr("btn_random", ctx), "search_random:sfw")
-    .row()
-    .text(tr("btn_back_to_menu", ctx), "cmd:main");
+  try {
+    const tags = await getTags();
+    const { items, totalPages } = paginateArray(tags, 1, 20);
 
-  await editOrSend(ctx, tr("search_tags_title", ctx), { reply_markup: kb });
+    const kb = new InlineKeyboard();
+    for (const tag of items)
+      kb.text(`${tag.name}`, `search_tag:${tag.slug}`).row();
+    kb.text(tr("btn_random", ctx), "search_random:sfw").row();
+    kb.text(tr("btn_back_to_menu", ctx), "cmd:main");
+    if (totalPages > 1) kb.text(`${tr("next_page", ctx)}`, "tags_page:2");
+
+    await editOrSend(
+      ctx,
+      `${tr("search_tags_title", ctx)}\n/search [tag1] [tag2]`,
+      { reply_markup: kb },
+    );
+  } catch (err) {
+    logger.error("Search tags error:", err);
+    await editOrSend(ctx, tr("tags_failed", ctx), {
+      reply_markup: new InlineKeyboard().text(
+        tr("btn_back_to_menu", ctx),
+        "cmd:main",
+      ),
+    });
+  }
 }
 
 async function handleTags(ctx: Context) {
@@ -157,9 +164,9 @@ async function handleTags(ctx: Context) {
 
     const kb = new InlineKeyboard();
     for (const tag of items)
-      kb.text(`🏷️ ${tag.name}`, `search_tag:${tag.slug}`).row();
+      kb.text(`${tag.name}`, `search_tag:${tag.slug}`).row();
     kb.row().text(tr("btn_back_to_menu", ctx), "cmd:main");
-    if (totalPages > 1) kb.text(`▶️ ${tr("next_page", ctx)}`, "tags_page:2");
+    if (totalPages > 1) kb.text(`${tr("next_page", ctx)}`, "tags_page:2");
 
     await editOrSend(ctx, text, { reply_markup: kb });
   } catch (err) {

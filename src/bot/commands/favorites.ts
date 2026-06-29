@@ -74,7 +74,7 @@ export function registerFavorites(bot: any) {
           if (btn.callback_data === `fav_toggle:${imageId}`) {
             return {
               ...btn,
-              text: added ? tr("btn_unfav", ctx) : tr("fav", ctx),
+              text: added ? tr("btn_unfav", ctx) : tr("btn_fav", ctx),
             };
           }
           return btn;

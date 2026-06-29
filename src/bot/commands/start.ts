@@ -30,8 +30,8 @@ export function registerStart(bot: any) {
         ? `@${owner.username}`
         : owner?.first_name || "Unknown";
 
-      let text = `${tr("albums_shared_view", ctx)}\n\n📁 ${album.name}`;
-      if (album.description) text += `\n📝 ${album.description}`;
+      let text = `${tr("albums_shared_view", ctx)}\n\n${album.name}`;
+      if (album.description) text += `\n${album.description}`;
       text += `\n👤 ${tr("albums_owner", ctx)}: ${ownerName}`;
 
       const kb = new InlineKeyboard()
@@ -47,8 +47,8 @@ export function registerStart(bot: any) {
 
     if (payload === "lang") {
       const kb = new InlineKeyboard()
-        .text("🇺🇸 English", "set_lang:en")
-        .text("🇮🇷 فارسی", "set_lang:fa");
+        .text("English", "set_lang:en")
+        .text("فارسی", "set_lang:fa");
       await ctx.reply(tr("choose_lang", ctx), { reply_markup: kb });
       return;
     }
@@ -67,11 +67,11 @@ export function registerStart(bot: any) {
 
     if (choice === "pick") {
       const kb = new InlineKeyboard()
-        .text("🇺🇸 English", "set_lang:en")
-        .text("🇮🇷 فارسی", "set_lang:fa");
-      await ctx.editMessageText(tr("choose_lang", ctx), { reply_markup: kb }).catch(() =>
-        ctx.reply(tr("choose_lang", ctx), { reply_markup: kb }),
-      );
+        .text("English", "set_lang:en")
+        .text("فارسی", "set_lang:fa");
+      await ctx
+        .editMessageText(tr("choose_lang", ctx), { reply_markup: kb })
+        .catch(() => ctx.reply(tr("choose_lang", ctx), { reply_markup: kb }));
       return;
     }
 

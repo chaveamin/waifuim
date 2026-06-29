@@ -165,14 +165,14 @@ async function showMyStats(ctx: Context, telegramId: number) {
 
   const text =
     `${tr("lb_my_stats_title", ctx)}\n\n` +
-    `🔥 ${tr("profile_commands", ctx)}: ${cmdCount}` +
+    `${tr("profile_commands", ctx)}: ${cmdCount}` +
     (activeRank >= 0 ? ` (#${activeRank + 1})` : "") +
     `\n` +
-    `❤️ ${tr("profile_favorites", ctx)}: ${favCount}` +
+    `${tr("profile_favorites", ctx)}: ${favCount}` +
     (favRank >= 0 ? ` (#${favRank + 1})` : "") +
     `\n` +
-    `📅 ${tr("lb_member_since", ctx)}: ${user.created_at}\n` +
-    `🕐 ${tr("lb_last_active", ctx)}: ${user.last_active}`;
+    `${tr("lb_member_since", ctx)}: ${user.created_at}\n` +
+    `${tr("lb_last_active", ctx)}: ${user.last_active}`;
 
   const kb = new InlineKeyboard()
     .text(tr("btn_back", ctx), "lb:main")

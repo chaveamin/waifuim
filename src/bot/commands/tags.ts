@@ -19,7 +19,7 @@ export function registerTags(bot: any) {
       await showTagsPage(ctx, tags, 1);
     } catch (err) {
       logger.error("Tags error:", err);
-      await ctx.reply("Failed to fetch tags.", {
+      await ctx.reply(tr("tags_failed", ctx), {
         reply_markup: new InlineKeyboard().text(
           `${tr("btn_back_to_menu", ctx)}`,
           "cmd:main",
@@ -97,12 +97,11 @@ export function registerTags(bot: any) {
   });
 }
 
-// 3. Replace the showTagsPage helper function
 async function showTagsPage(ctx: Context, tags: any[], page: number) {
   const { items, totalPages } = paginateArray(tags, page, 20);
-  let text = `🏷️ Tags (Page ${page}/${totalPages}, ${tags.length} total):\n\n`;
+  let text = `${tr("tags_title", ctx)} (${tr("tags_page", ctx)} ${page}/${totalPages}, ${tags.length} ${tr("tags_total", ctx)}):\n\n`;
   for (const tag of items) {
-    text += `🏷️ ${tag.name}\n`;
+    text += `${tag.name}\n`;
   }
 
   const kb = new InlineKeyboard();
@@ -112,13 +111,11 @@ async function showTagsPage(ctx: Context, tags: any[], page: number) {
   kb.row().text(`${tr("btn_back_to_menu", ctx)}`, "cmd:main");
 
   if (totalPages > 1) {
-    if (page > 1)
-      kb.text(`⬅️ ${tr("prev_page", ctx)}`, `tags_page:${page - 1}`);
+    if (page > 1) kb.text(`${tr("prev_page", ctx)}`, `tags_page:${page - 1}`);
     if (page < totalPages)
-      kb.text(`➡️ ${tr("next_page", ctx)}`, `tags_page:${page + 1}`);
+      kb.text(`${tr("next_page", ctx)}`, `tags_page:${page + 1}`);
   }
 
-  // Handle both commands and callback queries safely
   if (ctx.callbackQuery) {
     await ctx
       .editMessageText(text, { reply_markup: kb })
