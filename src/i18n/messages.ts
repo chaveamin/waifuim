@@ -3,7 +3,7 @@ export type Lang = "en" | "fa";
 export const messages: Record<string, Record<Lang, string>> = {
   welcome: {
     en: "Welcome to Wafuim Bot!\n\nAccess thousands of curated anime images with powerful filtering.\n\nUse the buttons below or type /help to see all commands.",
-    fa: "به ربات وایفویوم خوش آمدید!\n\nهزاران تصویر انیمه با فیلترهای قدرتمند.\n\nاز دکمه‌های زیر استفاده کنید یا /help را بفرستید.",
+    fa: "به ربات وایفویوم خوش آمدید!\n\nهزاران عکس انیمه با فیلترهای قدرتمند.\n\nاز دکمه‌های زیر استفاده کنید یا /help را بفرستید.",
   },
   choose_lang: {
     en: "Choose your language / زبان خود را انتخاب کنید:",
@@ -19,7 +19,7 @@ export const messages: Record<string, Record<Lang, string>> = {
   },
   cmd_random: {
     en: "/random - Random image based on settings",
-    fa: "/random - تصویر تصادفی بر اساس تنظیمات",
+    fa: "/random - عکس تصادفی بر اساس تنظیمات",
   },
   cmd_group: {
     en: "/group - Send a group of images",
@@ -51,7 +51,7 @@ export const messages: Record<string, Record<Lang, string>> = {
   },
   cmd_image: {
     en: "/image <id> - Get image by ID",
-    fa: "/image <id> - دریافت تصویر با شناسه",
+    fa: "/image <id> - دریافت عکس با شناسه",
   },
   cmd_favorites: {
     en: "/favorites - View your favorites",
@@ -71,7 +71,7 @@ export const messages: Record<string, Record<Lang, string>> = {
   },
   tip_fav_album: {
     en: "💡 Tip: Every image has ❤️ Favorite & 📚 Albums buttons!",
-    fa: "💡 نکته: هر تصویر دکمه‌های ❤️ علاقه‌مندی و 📚 آلبوم دارد!",
+    fa: "💡 نکته: هر عکس دکمه‌های ❤️ علاقه‌مندی و 📚 آلبوم دارد!",
   },
   tip_settings: {
     en: "💡 Use /settings to control count, orientation & more.",
@@ -127,7 +127,7 @@ export const messages: Record<string, Record<Lang, string>> = {
   btn_albums_pick: { en: "📚 Add to Album", fa: "📚 افزودن به آلبوم" },
   btn_create_album: { en: "➕ Create Album", fa: "➕ ساخت آلبوم" },
   btn_my_albums: { en: "📚 My Albums", fa: "📚 آلبوم‌های من" },
-  btn_add_image: { en: "➕ Add Image", fa: "➕ افزودن تصویر" },
+  btn_add_image: { en: "➕ Add Image", fa: "➕ افزودن عکس" },
   btn_delete_album: { en: "Delete Album", fa: "حذف آلبوم" },
   btn_share_album: { en: "Share Album", fa: "اشتراک‌گذاری آلبوم" },
   btn_share_album_link: { en: "Link:", fa: "لینک:" },
@@ -142,7 +142,7 @@ export const messages: Record<string, Record<Lang, string>> = {
   btn_keep: { en: "❌ No, keep it", fa: "❌ نه، نگه دار" },
   no_images: {
     en: "No images found with current settings.",
-    fa: "تصویری با تنظیمات فعلی یافت نشد.",
+    fa: "عکسی با تنظیمات فعلی یافت نشد.",
   },
   search_tags_title: {
     en: "🔍 Select tags or enter /search <tag1> <tag2>:",
@@ -154,7 +154,7 @@ export const messages: Record<string, Record<Lang, string>> = {
   },
   search_no_results: {
     en: "No images found for these tags.",
-    fa: "تصویری برای این تگ‌ها یافت نشد.",
+    fa: "عکسی برای این تگ‌ها یافت نشد.",
   },
   search_failed: {
     en: "Search failed. Try different tags.",
@@ -186,10 +186,12 @@ export const messages: Record<string, Record<Lang, string>> = {
   },
   artist_no_images: {
     en: "No images found for this artist.",
-    fa: "تصویری برای این آرتیست یافت نشد.",
+    fa: "عکسی برای این آرتیست یافت نشد.",
   },
   artist_another: { en: "Another from", fa: "دیگر از" },
   artist_unknown: { en: "Unknown", fa: "ناشناس" },
+  artist_err: { en: "Artists error:", fa: "خطای آرتیست:" },
+  artist_pageerr: { en: "Artists page error:", fa: "خطای صفحه آرتیست" },
   stats_title: { en: "API Statistics", fa: "آمار API" },
   stats_requests: { en: "Total Requests", fa: "کل درخواست‌ها" },
   stats_images: { en: "Total Images", fa: "کل تصاویر" },
@@ -226,11 +228,11 @@ export const messages: Record<string, Record<Lang, string>> = {
   settings_document: { en: "Uncompressed (File)", fa: "اصلی (فایل)" },
   random_no_images: {
     en: "No images found.",
-    fa: "تصویری یافت نشد.",
+    fa: "عکسی یافت نشد.",
   },
   random_failed: {
     en: "Failed to fetch image.",
-    fa: "بارگذاری تصویر ناموفق بود.",
+    fa: "بارگذاری عکس ناموفق بود.",
   },
   group_title: { en: "📸 Group", fa: "📸 گروهی" },
   group_sent: {
@@ -241,18 +243,18 @@ export const messages: Record<string, Record<Lang, string>> = {
     en: "Wait 5 more seconds.",
     fa: "یه 5 ثانیه دیگه صبر کن.",
   },
-  group_images: { en: "images", fa: "تصویر" },
-  daily_title: { en: "📅 Daily Image", fa: "📅 تصویر روزانه" },
+  group_images: { en: "images", fa: "عکس" },
+  daily_title: { en: "📅 Daily Image", fa: "📅 عکس روزانه" },
   daily_subscribed: { en: "Subscribed", fa: "اشتراک فعال" },
   daily_not_subscribed: { en: "Not subscribed", fa: "اشتراک غیرفعال" },
   daily_send_time: { en: "Send time", fa: "زمان ارسال" },
   daily_desc: {
     en: "You'll receive a random image every day at the scheduled time.",
-    fa: "هر روز در زمان تعیین شده یک تصویر تصادفی دریافت خواهید کرد.",
+    fa: "هر روز در زمان تعیین شده یک عکس تصادفی دریافت خواهید کرد.",
   },
   daily_not_desc: {
     en: "Subscribe to get a random image delivered daily!",
-    fa: "این ویژگی را فعال کنید تا هر روز یک تصویر تصادفی دریافت کنید!",
+    fa: "این ویژگی را فعال کنید تا هر روز یک عکس تصادفی دریافت کنید!",
   },
   daily_subscribed_text: {
     en: "Subscribed to daily images!",
@@ -323,23 +325,23 @@ export const messages: Record<string, Record<Lang, string>> = {
   },
   albums_add_prompt: {
     en: "Send an image ID to add to this album.\n\nExample: 1234",
-    fa: "شناسه تصویر را برای افزودن به این آلبوم بفرستید.\n\nمثال: 1234",
+    fa: "شناسه عکس را برای افزودن به این آلبوم بفرستید.\n\nمثال: 1234",
   },
-  albums_add_invalid: { en: "Invalid image ID.", fa: "شناسه تصویر نامعتبر." },
+  albums_add_invalid: { en: "Invalid image ID.", fa: "شناسه عکس نامعتبر." },
   albums_no_albums: {
     en: "No albums yet. Create one first",
     fa: "هنوز آلبومی ندارید. اول یکی بسازید",
   },
-  albums_pick_1: { en: "Add image", fa: "افزودن تصویر" },
+  albums_pick_1: { en: "Add image", fa: "افزودن عکس" },
   albums_pick_2: { en: "to album:", fa: "به آلبوم:" },
   album_add_success: { en: "Added to", fa: "اضافه شد به" },
   album_add_exists: {
     en: "Already in this album.",
-    fa: "تصویر در آلبوم موجو است.",
+    fa: "عکس در آلبوم موجو است.",
   },
-  album_img_not_found: { en: "Image not found.", fa: "تصویر یافت نشد." },
+  album_img_not_found: { en: "Image not found.", fa: "عکس یافت نشد." },
   album_list: { en: "Album list", fa: "لیست آلبوم‌ها" },
-  album_image: { en: "Removed image", fa: "تصویر" },
+  album_image: { en: "Removed image", fa: "عکس" },
   album_image_removed: { en: "from album.", fa: "از آلبوم حذف شد." },
   album_notfound: { en: "Album not found", fa: "آلبوم یافت نشد" },
   album_notfoundexp: {
@@ -382,7 +384,7 @@ export const messages: Record<string, Record<Lang, string>> = {
   lb_last_active: { en: "Last Active", fa: "آخرین فعالیت" },
   image_not_found: {
     en: "Image not found or failed to fetch.",
-    fa: "تصویر یافت نشد یا بارگذاری ناموفق بود.",
+    fa: "عکس یافت نشد یا بارگذاری ناموفق بود.",
   },
   image_usage: {
     en: "Usage: /image <id>\nExample: /image 1234",

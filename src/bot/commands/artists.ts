@@ -20,8 +20,8 @@ export function registerArtists(bot: any) {
       const artists = await getArtists();
       await showArtistsPage(ctx, artists, 1);
     } catch (err) {
-      logger.error("Artists error:", err);
-      await ctx.reply("Failed to fetch artists.", {
+      logger.error(tr("artist_err", ctx), err);
+      await ctx.reply(tr("artists_failed", ctx), {
         reply_markup: new InlineKeyboard().text(
           `${tr("btn_back_to_menu", ctx)}`,
           "cmd:main",
@@ -37,7 +37,7 @@ export function registerArtists(bot: any) {
       const artists = await getArtists();
       await showArtistsPage(ctx, artists, page);
     } catch (err) {
-      logger.error("Artists page error:", err);
+      logger.error(tr("artist_pageerr", ctx), err);
     }
   });
 
