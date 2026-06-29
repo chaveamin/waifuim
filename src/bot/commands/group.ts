@@ -52,21 +52,16 @@ export async function sendGroup(ctx: Context) {
     const media = images.map((img, i) => ({
       type: isDoc ? ("document" as const) : ("photo" as const),
       media: img.url,
-      ...(i === 0
-        ? { caption: `${images.length} ${tr("group_images", ctx)}` }
-        : {}),
     }));
-
     await ctx.replyWithMediaGroup(media);
 
     const kb = new InlineKeyboard()
       .text(tr("btn_another_group", ctx), "cmd:group")
-      .text(tr("btn_random", ctx), "cmd:random")
       .row()
       .text(tr("btn_change_settings", ctx), "cmd:settings")
       .text(tr("btn_menu", ctx), "cmd:main");
 
-    const doneText = tr("group_sent", ctx);
+    const doneText = `${images.length} ${tr("group_sent", ctx)}`;
     if (ctx.callbackQuery) {
       await ctx
         .editMessageText(doneText, { reply_markup: kb })

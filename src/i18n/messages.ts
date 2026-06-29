@@ -260,7 +260,7 @@ export const messages: Record<string, Record<Lang, string>> = {
   group_title: { en: "📸 Group", fa: "📸 گروهی" },
   group_sent: {
     en: "Sent images. Adjust count in /settings.",
-    fa: "تصاویر ارسال شد. تعداد را در /settings تنظیم کنید.",
+    fa: "عکس ارسال شد. تعداد را در /settings تنظیم کنید.",
   },
   group_failed: {
     en: "Wait 5 more seconds.",
