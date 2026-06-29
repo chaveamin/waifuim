@@ -105,7 +105,7 @@ async function showUsersList(ctx: Context, users: any[], page: number) {
       ? `@${u.username}`
       : u.first_name || String(u.telegram_id);
     const status = u.is_banned ? " 🚫" : u.is_admin ? "" : "";
-    text += `• ${truncate(name, 20)}${status}\n  ID: ${u.telegram_id} | Joined: ${formatDate(u.created_at)}\n`;
+    text += `• ${truncate(name, 20)}${status}\n  ID: ${u.telegram_id} | Joined: ${formatDate(u.created_at, ctx)}\n`;
   }
 
   const kb = new InlineKeyboard();
@@ -153,7 +153,7 @@ async function showUserDetail(ctx: Context, telegramId: number) {
   const nsfwMode = user.nsfw_mode ?? "sfw";
 
   const text =
-    `👤 ${tr("admin_user_detail", ctx)}\n\n` +
+    `${tr("admin_user_detail", ctx)}\n\n` +
     `${tr("profile_name", ctx)}: ${name}\n` +
     `${tr("profile_id", ctx)}: ${user.telegram_id}\n` +
     `${tr("profile_user", ctx)}: ${user.username ?? tr("profile_userna", ctx)}\n` +
@@ -164,8 +164,8 @@ async function showUserDetail(ctx: Context, telegramId: number) {
     `  ${tr("settings_images_per", ctx)}: ${count}\n` +
     `  ${tr("settings_orientation", ctx)}: ${orientation === "any" ? tr("settings_any", ctx) : orientation}\n` +
     `  ${tr("settings_animation", ctx)}: ${animation === "any" ? tr("settings_any", ctx) : animation}\n\n` +
-    `${tr("profile_joined", ctx)}: ${formatDate(user.created_at)}\n` +
-    `${tr("profile_last_active", ctx)}: ${formatDate(user.last_active)}`;
+    `${tr("profile_joined", ctx)}: ${formatDate(user.created_at, ctx)}\n` +
+    `${tr("profile_last_active", ctx)}: ${formatDate(user.last_active, ctx)}`;
 
   const kb = new InlineKeyboard()
     .text(
