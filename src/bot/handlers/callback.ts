@@ -255,84 +255,134 @@ async function handleSettings(ctx: Context) {
     `${tr("settings_tap_change", ctx)}`;
 
   const kb = new InlineKeyboard();
+
+  // Content
   if (config.nsfwAllowed) {
-    kb.text(
-      nsfwMode === "sfw"
-        ? `✅ ${tr("settings_sfw_only", ctx)}`
-        : `${tr("settings_sfw_only", ctx)}`,
-      "set_nsfw:sfw",
-    );
-    kb.text(
-      nsfwMode === "nsfw"
-        ? `✅ ${tr("settings_nsfw_only", ctx)}`
-        : `${tr("settings_nsfw_only", ctx)}`,
-      "set_nsfw:nsfw",
-    ).row();
-    kb.text(
-      nsfwMode === "any"
-        ? `✅ ${tr("settings_sfw_nsfw", ctx)}`
-        : `${tr("settings_sfw_nsfw", ctx)}`,
-      "set_nsfw:any",
-    ).row();
+    kb.add({
+      text: tr("settings_content", ctx),
+      callback_data: ".",
+    }).row();
+    kb.add({
+      text: tr("settings_sfw_only", ctx),
+      callback_data: "set_nsfw:sfw",
+      style: nsfwMode === "sfw" ? "success" : "primary",
+    });
+    kb.add({
+      text: tr("settings_nsfw_only", ctx),
+      callback_data: "set_nsfw:nsfw",
+      style: nsfwMode === "nsfw" ? "success" : "primary",
+    });
+    kb.add({
+      text: tr("settings_sfw_nsfw", ctx),
+      callback_data: "set_nsfw:any",
+      style: nsfwMode === "any" ? "success" : "primary",
+    }).row();
   }
 
-  kb.text(count === 1 ? `✅ 1` : "1", "set_count:1")
-    .text(count === 3 ? `✅ 3` : "3", "set_count:3")
-    .row()
-    .text(count === 5 ? `✅ 5` : "5", "set_count:5")
-    .text(count === 10 ? `✅ 10` : "10", "set_count:10")
-    .row();
+  // Count
+  kb.add({
+    text: tr("settings_img_count", ctx),
+    callback_data: ".",
+  }).row();
+  kb.add(
+    {
+      text: "1",
+      callback_data: "set_count:1",
+      style: count === 1 ? "success" : "primary",
+    },
+    {
+      text: "3",
+      callback_data: "set_count:3",
+      style: count === 3 ? "success" : "primary",
+    },
+  );
+  kb.add(
+    {
+      text: "5",
+      callback_data: "set_count:5",
+      style: count === 5 ? "success" : "primary",
+    },
+    {
+      text: "10",
+      callback_data: "set_count:10",
+      style: count === 10 ? "success" : "primary",
+    },
+  ).row();
 
-  kb.text(
-    orientation === "landscape"
-      ? `✅ ${tr("settings_landscape", ctx)}`
-      : `${tr("settings_landscape", ctx)}`,
-    "set_orientation:landscape",
-  )
-    .text(
-      orientation === "portrait"
-        ? `✅ ${tr("settings_portrait", ctx)}`
-        : `${tr("settings_portrait", ctx)}`,
-      "set_orientation:portrait",
-    )
-    .row()
+  // Orientation
+  kb.add({
+    text: tr("settings_orientation", ctx),
+    callback_data: ".",
+  }).row();
+  kb.add(
+    {
+      text: tr("settings_landscape", ctx),
+      callback_data: "set_orientation:landscape",
+      style: orientation === "landscape" ? "success" : "primary",
+    },
+    {
+      text: tr("settings_portrait", ctx),
+      callback_data: "set_orientation:portrait",
+      style: orientation === "portrait" ? "success" : "primary",
+    },
+  );
+  kb.add({
+    text: tr("settings_any", ctx),
+    callback_data: "set_orientation:any",
+    style: orientation === "any" ? "success" : "primary",
+  }).row();
 
-    .text(
-      orientation === "any"
-        ? `✅ ${tr("settings_any", ctx)}`
-        : `${tr("settings_any", ctx)}`,
-      "set_orientation:any",
-    )
-    .row();
-  kb.text(
-    animation === "animated"
-      ? `✅ ${tr("settings_animated", ctx)}`
-      : `${tr("settings_animated", ctx)}`,
-    "set_animation:animated",
-  )
-    .text(
-      animation === "static"
-        ? `✅ ${tr("settings_static", ctx)}`
-        : `${tr("settings_static", ctx)}`,
-      "set_animation:static",
-    )
-    .row()
-    .text(
-      animation === "any"
-        ? `✅ ${tr("settings_any", ctx)}`
-        : `${tr("settings_any", ctx)}`,
-      "set_animation:any",
-    )
-    .row();
+  // Animated/Static
+  kb.add({
+    text: tr("settings_style", ctx),
+    callback_data: ".",
+  }).row();
+  kb.add(
+    {
+      text: tr("settings_animated", ctx),
+      callback_data: "set_animation:animated",
+      style: animation === "animated" ? "success" : "primary",
+    },
+    {
+      text: tr("settings_static", ctx),
+      callback_data: "set_animation:static",
+      style: animation === "static" ? "success" : "primary",
+    },
+  );
+  kb.add({
+    text: tr("settings_any", ctx),
+    callback_data: "set_animation:any",
+    style: animation === "any" ? "success" : "primary",
+  }).row();
 
-  kb.text(sendMode === "photo" ? "✅ Photo" : "Photo", "set_send_mode:photo")
-    .text(
-      sendMode === "document" ? "✅ File" : "File",
-      "set_send_mode:document",
-    )
-    .row();
+  // Mode
+  kb.add({
+    text: tr("settings_mode", ctx),
+    callback_data: ".",
+  }).row();
+  kb.add(
+    {
+      text: tr("settings_photo", ctx),
+      callback_data: "set_send_mode:photo",
+      style: sendMode === "photo" ? "success" : "primary",
+    },
+    {
+      text: tr("settings_document", ctx),
+      callback_data: "set_send_mode:document",
+      style: sendMode === "document" ? "success" : "primary",
+    },
+  ).row();
 
-  kb.text(lang === "fa" ? "🇮🇷" : "🇺🇸 English", "set_lang:pick").row();
+  // Language
+  kb.add({
+    text: tr("settings_lang", ctx),
+    callback_data: ".",
+  }).row();
+  kb.add({
+    text: lang === "fa" ? "فارسی" : "English",
+    callback_data: "set_lang:pick",
+    style: "primary",
+  }).row();
 
   kb.text(tr("btn_back_to_menu", ctx), "cmd:main");
 

@@ -217,8 +217,10 @@ export const messages: Record<string, Record<Lang, string>> = {
   settings_landscape: { en: "Landscape", fa: "افقی" },
   settings_portrait: { en: "Portrait", fa: "عمودی" },
   settings_any: { en: "any", fa: "همه" },
-  settings_animated: { en: "Animated", fa: "متحرک" },
+  settings_animated: { en: "Animated(gif)", fa: "متحرک(گیف)" },
   settings_static: { en: "Static", fa: "ثابت" },
+  settings_style: { en: "Style", fa: "استایل" },
+  settings_mode: { en: "Mode", fa: "نوع ارسال" },
   settings_tap_change: {
     en: "Tap an option below to change it:",
     fa: "یک گزینه را برای تغییر لمس کنید:",
@@ -226,6 +228,11 @@ export const messages: Record<string, Record<Lang, string>> = {
   settings_send_mode: { en: "Delivery Mode", fa: "نحوه ارسال" },
   settings_photo: { en: "Compressed (Photo)", fa: "فشرده (عکس)" },
   settings_document: { en: "Uncompressed (File)", fa: "اصلی (فایل)" },
+  settings_img_count: {
+    en: "Image count per message(Group)",
+    fa: "تعداد ارسال در هر پیام(گروهی)",
+  },
+  settings_lang: { en: "choose language", fa: "انتخاب زبان" },
   random_no_images: {
     en: "No images found.",
     fa: "عکسی یافت نشد.",

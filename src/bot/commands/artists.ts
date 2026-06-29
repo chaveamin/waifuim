@@ -23,7 +23,7 @@ export function registerArtists(bot: any) {
       logger.error(tr("artist_err", ctx), err);
       await ctx.reply(tr("artists_failed", ctx), {
         reply_markup: new InlineKeyboard().text(
-          `${tr("btn_back_to_menu", ctx)}`,
+          tr("btn_back_to_menu", ctx),
           "cmd:main",
         ),
       });
