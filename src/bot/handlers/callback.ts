@@ -545,11 +545,10 @@ async function handleLeaderboard(ctx: Context) {
 
   const text =
     `${tr("lb_title", ctx)}\n\n` +
-    `📊 ${tr("lb_community", ctx)}\n` +
-    `  👥 ${tr("lb_users", ctx)}: ${totalUsers}\n` +
-    `  📚 ${tr("lb_albums", ctx)}: ${totalAlbums}\n` +
-    `  📅 ${tr("lb_daily_sub", ctx)}: ${dailyCount}\n\n` +
-    `${tr("lb_choose", ctx)}`;
+    `${tr("lb_community", ctx)}\n` +
+    `  ${tr("lb_users", ctx)}: ${totalUsers}\n` +
+    `  ${tr("lb_albums", ctx)}: ${totalAlbums}\n` +
+    `  ${tr("lb_daily_sub", ctx)}: ${dailyCount}\n\n`;
 
   const kb = new InlineKeyboard()
     .text(tr("lb_active", ctx), "lb:active")

@@ -49,8 +49,14 @@ export function registerLeaderboard(bot: any) {
   });
 }
 
-function displayName(user: { username: string | null; first_name: string | null; telegram_id: number }): string {
-  return user.username ? `@${user.username}` : user.first_name || String(user.telegram_id);
+function displayName(user: {
+  username: string | null;
+  first_name: string | null;
+  telegram_id: number;
+}): string {
+  return user.username
+    ? `@${user.username}`
+    : user.first_name || String(user.telegram_id);
 }
 
 function medal(i: number): string {
@@ -64,11 +70,10 @@ async function showLeaderboard(ctx: Context, userId: number) {
 
   const text =
     `${tr("lb_title", ctx)}\n\n` +
-    `📊 ${tr("lb_community", ctx)}\n` +
-    `  👥 ${tr("lb_users", ctx)}: ${totalUsers}\n` +
-    `  📚 ${tr("lb_albums", ctx)}: ${totalAlbums}\n` +
-    `  📅 ${tr("lb_daily_sub", ctx)}: ${dailyCount}\n\n` +
-    `${tr("lb_choose", ctx)}`;
+    `${tr("lb_community", ctx)}\n` +
+    `  ${tr("lb_users", ctx)}: ${totalUsers}\n` +
+    `  ${tr("lb_albums", ctx)}: ${totalAlbums}\n` +
+    `  ${tr("lb_daily_sub", ctx)}: ${dailyCount}\n\n`;
 
   const kb = new InlineKeyboard()
     .text(tr("lb_active", ctx), "lb:active")
@@ -80,7 +85,9 @@ async function showLeaderboard(ctx: Context, userId: number) {
     .text(tr("btn_back_to_menu", ctx), "cmd:main");
 
   if (ctx.callbackQuery) {
-    await ctx.editMessageText(text, { reply_markup: kb }).catch(() => ctx.reply(text, { reply_markup: kb }));
+    await ctx
+      .editMessageText(text, { reply_markup: kb })
+      .catch(() => ctx.reply(text, { reply_markup: kb }));
   } else {
     await ctx.reply(text, { reply_markup: kb });
   }
@@ -90,13 +97,18 @@ async function showActiveLeaderboard(ctx: Context) {
   const users = await getMostActiveUsers(10);
   let text = `${tr("lb_active_title", ctx)}\n\n`;
   if (!users.length) text += tr("lb_no_data", ctx);
-  else for (let i = 0; i < users.length; i++) text += `${medal(i)} ${displayName(users[i])} — ${users[i].command_count} ${tr("lb_commands", ctx)}\n`;
+  else
+    for (let i = 0; i < users.length; i++)
+      text += `${medal(i)} ${displayName(users[i])} — ${users[i].command_count} ${tr("lb_commands", ctx)}\n`;
 
   const kb = new InlineKeyboard()
     .text(tr("btn_back", ctx), "lb:main")
     .text(tr("btn_menu", ctx), "cmd:main");
 
-  if (ctx.callbackQuery) await ctx.editMessageText(text, { reply_markup: kb }).catch(() => ctx.reply(text, { reply_markup: kb }));
+  if (ctx.callbackQuery)
+    await ctx
+      .editMessageText(text, { reply_markup: kb })
+      .catch(() => ctx.reply(text, { reply_markup: kb }));
   else await ctx.reply(text, { reply_markup: kb });
 }
 
@@ -104,13 +116,18 @@ async function showFavoritesLeaderboard(ctx: Context) {
   const users = await getMostFavoritedUsers(10);
   let text = `${tr("lb_most_fav_title", ctx)}\n\n`;
   if (!users.length) text += tr("lb_no_data", ctx);
-  else for (let i = 0; i < users.length; i++) text += `${medal(i)} ${displayName(users[i])} — ${users[i].fav_count}\n`;
+  else
+    for (let i = 0; i < users.length; i++)
+      text += `${medal(i)} ${displayName(users[i])} — ${users[i].fav_count}\n`;
 
   const kb = new InlineKeyboard()
     .text(tr("btn_back", ctx), "lb:main")
     .text(tr("btn_menu", ctx), "cmd:main");
 
-  if (ctx.callbackQuery) await ctx.editMessageText(text, { reply_markup: kb }).catch(() => ctx.reply(text, { reply_markup: kb }));
+  if (ctx.callbackQuery)
+    await ctx
+      .editMessageText(text, { reply_markup: kb })
+      .catch(() => ctx.reply(text, { reply_markup: kb }));
   else await ctx.reply(text, { reply_markup: kb });
 }
 
@@ -118,20 +135,27 @@ async function showAlbumsLeaderboard(ctx: Context) {
   const users = await getMostAlbumCreators(10);
   let text = `${tr("lb_most_albums_title", ctx)}\n\n`;
   if (!users.length) text += tr("lb_no_data", ctx);
-  else for (let i = 0; i < users.length; i++) text += `${medal(i)} ${displayName(users[i])} — ${users[i].album_count}\n`;
+  else
+    for (let i = 0; i < users.length; i++)
+      text += `${medal(i)} ${displayName(users[i])} — ${users[i].album_count}\n`;
 
   const kb = new InlineKeyboard()
     .text(tr("btn_back", ctx), "lb:main")
     .text(tr("btn_menu", ctx), "cmd:main");
 
-  if (ctx.callbackQuery) await ctx.editMessageText(text, { reply_markup: kb }).catch(() => ctx.reply(text, { reply_markup: kb }));
+  if (ctx.callbackQuery)
+    await ctx
+      .editMessageText(text, { reply_markup: kb })
+      .catch(() => ctx.reply(text, { reply_markup: kb }));
   else await ctx.reply(text, { reply_markup: kb });
 }
 
 async function showMyStats(ctx: Context, telegramId: number) {
   const user = await getUser(telegramId);
   if (!user) return;
-  const cmdCount = await (await import("../../db/queries.js")).getUserCommandCount(telegramId);
+  const cmdCount = await (
+    await import("../../db/queries.js")
+  ).getUserCommandCount(telegramId);
   const favCount = await getFavoriteCount(telegramId);
 
   const allActive = await getMostActiveUsers(1000);
@@ -141,8 +165,12 @@ async function showMyStats(ctx: Context, telegramId: number) {
 
   const text =
     `${tr("lb_my_stats_title", ctx)}\n\n` +
-    `🔥 ${tr("profile_commands", ctx)}: ${cmdCount}` + (activeRank >= 0 ? ` (#${activeRank + 1})` : "") + `\n` +
-    `❤️ ${tr("profile_favorites", ctx)}: ${favCount}` + (favRank >= 0 ? ` (#${favRank + 1})` : "") + `\n` +
+    `🔥 ${tr("profile_commands", ctx)}: ${cmdCount}` +
+    (activeRank >= 0 ? ` (#${activeRank + 1})` : "") +
+    `\n` +
+    `❤️ ${tr("profile_favorites", ctx)}: ${favCount}` +
+    (favRank >= 0 ? ` (#${favRank + 1})` : "") +
+    `\n` +
     `📅 ${tr("lb_member_since", ctx)}: ${user.created_at}\n` +
     `🕐 ${tr("lb_last_active", ctx)}: ${user.last_active}`;
 
@@ -150,6 +178,9 @@ async function showMyStats(ctx: Context, telegramId: number) {
     .text(tr("btn_back", ctx), "lb:main")
     .text(tr("btn_menu", ctx), "cmd:main");
 
-  if (ctx.callbackQuery) await ctx.editMessageText(text, { reply_markup: kb }).catch(() => ctx.reply(text, { reply_markup: kb }));
+  if (ctx.callbackQuery)
+    await ctx
+      .editMessageText(text, { reply_markup: kb })
+      .catch(() => ctx.reply(text, { reply_markup: kb }));
   else await ctx.reply(text, { reply_markup: kb });
 }

@@ -27,11 +27,10 @@ export function buildImageCaption(image: WaifuImage, ctx?: any): string {
                     ? "GIF"
                     : key;
   let caption =
-    `🖼️ ${tFn("image_id")}: ${image.id}\n` +
-    `🎨 ${tFn("image_artist")}: ${artists}\n` +
-    `🏷️ ${tFn("image_tags")}: ${tags}\n` +
-    `📁 ${tFn("image_size")}: ${formatBytes(image.byteSize)}\n` +
-    `${image.width}x${image.height}` +
+    `${tFn("image_id")}: ${image.id}\n` +
+    `${tFn("image_artist")}: ${artists}\n` +
+    `${tFn("image_tags")}: ${tags}\n` +
+    `${tFn("image_size")}: ${formatBytes(image.byteSize)}\n` +
     (image.isAnimated ? ` (${tFn("image_animated")})` : "") +
     `\n❤️ ${tFn("image_favorites")}: ${image.favorites}`;
   if (image.source) {
@@ -60,8 +59,8 @@ export function buildImageKb(
       `artist_random:${artistId}`,
     );
   }
-  kb.text("🎲 Random", "cmd:random")
-    .text("🔍 Search", "cmd:search")
+  kb.text(tr("btn_randommore", ctx), "cmd:random")
+    .text(tr("btn_search", ctx), "cmd:search")
     .row()
     .text(tr("btn_menu", ctx), "cmd:main");
   return kb;

@@ -9,11 +9,11 @@ export function registerStats(bot: any) {
     try {
       const stats = await getPublicStats();
       const text =
-        `📊 API Statistics\n\n` +
-        `📈 Total Requests: ${stats.totalRequests.toLocaleString()}\n` +
-        `🖼️ Total Images: ${stats.totalImages.toLocaleString()}\n` +
-        `🏷️ Total Tags: ${stats.totalTags.toLocaleString()}\n` +
-        `🎨 Total Artists: ${stats.totalArtists.toLocaleString()}`;
+        `API Statistics\n\n` +
+        `Total Requests: ${stats.totalRequests.toLocaleString()}\n` +
+        `Total Images: ${stats.totalImages.toLocaleString()}\n` +
+        `Total Tags: ${stats.totalTags.toLocaleString()}\n` +
+        `Total Artists: ${stats.totalArtists.toLocaleString()}`;
 
       const kb = new InlineKeyboard().text(
         `${tr("btn_back_to_menu", ctx)}`,

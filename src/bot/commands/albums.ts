@@ -43,8 +43,8 @@ export function registerAlbums(bot: any) {
     const userId = ctx.from?.id;
     if (!userId) return;
     createState.set(userId, { step: "name" });
-    const kb = new InlineKeyboard().text("Album list", "albums:list");
-    await ctx.reply("Send a name for your new album:", { reply_markup: kb });
+    const kb = new InlineKeyboard().text(tr("album_list", ctx), "albums:list");
+    await ctx.reply(tr("albums_create_title", ctx), { reply_markup: kb });
   });
 
   bot.callbackQuery(/^album_view:(\d+)$/, async (ctx: Context) => {
@@ -78,16 +78,16 @@ export function registerAlbums(bot: any) {
       const user = await getUser(userId);
       const fav = await isFavorited(userId, imageId);
       const kb = buildMiniImageKb(imageId, fav, ctx);
-      kb.row().text("Back to Album", `album_view:${albumId}`);
+      kb.row().text(tr("albums_back", ctx), `album_view:${albumId}`);
       await replyWithMediaUniversal(ctx, user, image.url, {
         caption,
         reply_markup: kb,
         parse_mode: "Markdown",
       });
     } catch {
-      await ctx.reply("Image not found.", {
+      await ctx.reply(tr("album_img_not_found", ctx), {
         reply_markup: new InlineKeyboard().text(
-          "Back to Album",
+          tr("albums_back", ctx),
           `album_view:${albumId}`,
         ),
       });
@@ -100,8 +100,11 @@ export function registerAlbums(bot: any) {
     const userId = ctx.from?.id;
     if (!userId) return;
     addState.set(userId, albumId);
-    const kb = new InlineKeyboard().text("View Album", `album_view:${albumId}`);
-    await ctx.reply(`Send an image ID to add to this album.\n\nExample: 1234`, {
+    const kb = new InlineKeyboard().text(
+      tr("btn_view_album", ctx),
+      `album_view:${albumId}`,
+    );
+    await ctx.reply(`${tr("btn_search_artist_again", ctx)}`, {
       reply_markup: kb,
     });
   });
@@ -116,8 +119,8 @@ export function registerAlbums(bot: any) {
     const count = await getAlbumImageCount(albumId);
     const text =
       count === 0
-        ? "Album is now empty."
-        : `Removed image ${imageId} from album.`;
+        ? tr("albums_empty_text", ctx)
+        : `${tr("album_image", ctx)} ${imageId} ${tr("album_image_removed", ctx)}`;
     await ctx.answerCallbackQuery({ text });
     await showAlbum(ctx, userId, albumId, 1);
   });
@@ -127,13 +130,13 @@ export function registerAlbums(bot: any) {
     await ctx.answerCallbackQuery();
     const album = await getAlbum(albumId);
     if (!album) {
-      await ctx.reply("Album not found.");
+      await ctx.reply(tr("album_notfound", ctx));
       return;
     }
     const kb = new InlineKeyboard()
-      .text("Yes, delete", `album_delconfirm:${albumId}`)
-      .text("No, keep it", `album_view:${albumId}`);
-    await ctx.reply(`🗑️ Delete album "${album.name}"? This cannot be undone.`, {
+      .text(tr("btn_confirm", ctx), `album_delconfirm:${albumId}`)
+      .text(tr("btn_keep", ctx), `album_view:${albumId}`);
+    await ctx.reply(tr("albums_delete_confirm", ctx), {
       reply_markup: kb,
     });
   });
@@ -144,7 +147,7 @@ export function registerAlbums(bot: any) {
     const userId = ctx.from?.id;
     if (!userId) return;
     await deleteAlbum(albumId);
-    await ctx.answerCallbackQuery({ text: "Album deleted." });
+    await ctx.answerCallbackQuery({ text: tr("albums_deleted", ctx) });
     await showAlbums(ctx, userId);
   });
 
@@ -156,7 +159,7 @@ export function registerAlbums(bot: any) {
 
     const album = await getAlbum(albumId);
     if (!album || album.user_id !== userId) {
-      await ctx.reply("Album not found.");
+      await ctx.reply(tr("album_notfound", ctx));
       return;
     }
 
@@ -164,15 +167,15 @@ export function registerAlbums(bot: any) {
     const shareUrl = `https://t.me/${botUsername}?start=album_${album.share_token}`;
 
     const text =
-      `Share Album\n\n` +
+      `${tr("btn_share_album", ctx)}\n\n` +
       `${album.name}\n` +
-      `Link: ${shareUrl}\n\n` +
-      `Anyone with this link can view your album.`;
+      `${tr("btn_share_album_link", ctx)} ${shareUrl}\n\n` +
+      `${tr("albums_share_desc", ctx)}`;
 
     const kb = new InlineKeyboard()
-      .url("Share Link", shareUrl)
+      .url(tr("albums_share_linkbtn", ctx), shareUrl)
       .row()
-      .text("Back to Album", `album_view:${albumId}`);
+      .text(tr("albums_back", ctx), `album_view:${albumId}`);
 
     await ctx.reply(text, { reply_markup: kb });
   });
@@ -201,13 +204,13 @@ export function registerAlbums(bot: any) {
 
     const sourceAlbum = await getAlbum(sourceAlbumId);
     if (!sourceAlbum) {
-      await ctx.reply("Album not found.");
+      await ctx.reply(tr("album_notfound", ctx));
       return;
     }
 
     const newAlbumId = await createAlbum(
       userId,
-      `Copy of ${sourceAlbum.name}`,
+      `${tr("btn_copy", ctx)} ${sourceAlbum.name}`,
       sourceAlbum.description,
     );
     const images = await getAlbumImages(sourceAlbumId, 100, 0);
@@ -217,15 +220,12 @@ export function registerAlbums(bot: any) {
     }
 
     const kb = new InlineKeyboard()
-      .text("View My Copy", `album_view:${newAlbumId}`)
-      .text("My Albums", "albums:list");
+      .text(tr("lb_albums_copy_view", ctx), `album_view:${newAlbumId}`)
+      .text(tr("btn_my_albums", ctx), "albums:list");
 
-    await ctx.reply(
-      `Copied ${copied} images to your new album "${sourceAlbum.name}"!`,
-      {
-        reply_markup: kb,
-      },
-    );
+    await ctx.reply(`tr("albums_copied", ctx) "${sourceAlbum.name}"`, {
+      reply_markup: kb,
+    });
   });
 
   bot.callbackQuery(/^pick_album:(\d+)$/, async (ctx: Context) => {
@@ -237,13 +237,13 @@ export function registerAlbums(bot: any) {
     const albums = await getUserAlbums(userId);
     if (!albums.length) {
       const kb = new InlineKeyboard()
-        .text("➕ Create Album", "albums:create")
-        .text("My Albums", "albums:list");
-      await ctx.reply("No albums yet. Create one first!", { reply_markup: kb });
+        .text(tr("album_new", ctx), "albums:create")
+        .text(tr("btn_my_albums", ctx), "albums:list");
+      await ctx.reply(tr("albums_no_albums", ctx), { reply_markup: kb });
       return;
     }
 
-    let text = `Add image #${imageId} to album:\n\n`;
+    let text = `${tr("albums_pick_1", ctx)} #${imageId} ${tr("albums_pick_2", ctx)}\n\n`;
     const kb = new InlineKeyboard();
     for (const a of albums) {
       kb.text(
@@ -251,8 +251,8 @@ export function registerAlbums(bot: any) {
         `album_quickadd:${a.id}:${imageId}`,
       ).row();
     }
-    kb.text("Create New Album", "albums:create").row();
-    kb.text("Menu", "cmd:main");
+    kb.text(tr("album_new", ctx), "albums:create").row();
+    kb.text(tr("btn_back_to_menu", ctx), "cmd:main");
 
     await ctx.reply(text, { reply_markup: kb });
   });
@@ -266,9 +266,11 @@ export function registerAlbums(bot: any) {
     const name = album?.name ?? "album";
 
     if (added) {
-      await ctx.answerCallbackQuery({ text: `Added to "${name}"!` });
+      await ctx.answerCallbackQuery({
+        text: `${tr("album_add_success", ctx)} "${name}"`,
+      });
     } else {
-      await ctx.answerCallbackQuery({ text: `Already in "${name}".` });
+      await ctx.answerCallbackQuery({ text: tr("album_add_exists", ctx) });
     }
 
     const userId = ctx.from?.id;
@@ -284,8 +286,8 @@ export function registerAlbums(bot: any) {
         `album_quickadd:${a.id}:${imageId}`,
       ).row();
     }
-    kb.text("Create New Album", "albums:create").row();
-    kb.text("Menu", "cmd:main");
+    kb.text(tr("album_new", ctx), "albums:create").row();
+    kb.text(tr("btn_back_to_menu", ctx), "cmd:main");
 
     await ctx.editMessageReplyMarkup({ reply_markup: kb }).catch(() => {});
   });
@@ -301,15 +303,15 @@ export function registerAlbums(bot: any) {
 
       if (create.step === "name") {
         if (text.length > 50) {
-          await ctx.reply("Name too long. Max 50 characters. Try again:");
+          await ctx.reply(tr("albums_name_long", ctx));
           return;
         }
         create.name = text;
         create.step = "desc";
         const kb = new InlineKeyboard()
-          .text("Skip", "albums:skipdesc")
-          .text("Album list", "albums:list");
-        await ctx.reply(`Now send a description for "${text}" (or skip):`, {
+          .text(tr("btn_skip", ctx), "albums:skipdesc")
+          .text(tr("album_list", ctx), "albums:list");
+        await ctx.reply(`${tr("albums_desc_prompt", ctx)} "${text}"`, {
           reply_markup: kb,
         });
         return;
@@ -319,11 +321,11 @@ export function registerAlbums(bot: any) {
         createState.delete(userId);
         const albumId = await createAlbum(userId, create.name!, text);
         const kb = new InlineKeyboard()
-          .text("➕ Add Images", `album_add:${albumId}`)
-          .text("View Album", `album_view:${albumId}`)
+          .text(tr("album_add_images", ctx), `album_add:${albumId}`)
+          .text(tr("btn_view_album", ctx), `album_view:${albumId}`)
           .row()
-          .text("My Albums", "albums:list");
-        await ctx.reply(`Album "${create.name}" created!`, {
+          .text(tr("btn_my_albums", ctx), "albums:list");
+        await ctx.reply(tr("albums_created", ctx), {
           reply_markup: kb,
         });
         return;
@@ -338,9 +340,9 @@ export function registerAlbums(bot: any) {
       addState.delete(userId);
       const imageId = parseInt(text);
       if (isNaN(imageId)) {
-        await ctx.reply("Invalid image ID. Use a number.", {
+        await ctx.reply(tr("albums_add_invalid", ctx), {
           reply_markup: new InlineKeyboard().text(
-            "Back to Album",
+            tr("albums_back", ctx),
             `album_view:${addAlbumId}`,
           ),
         });
@@ -349,9 +351,11 @@ export function registerAlbums(bot: any) {
 
       const added = await addToAlbum(addAlbumId, imageId);
       if (added) {
-        await ctx.reply(`Added image ${imageId} to album!`);
+        await ctx.reply(
+          `${tr("albums_pick_1", ctx)} ${imageId} ${tr("albums_pick_2", ctx)}`,
+        );
       } else {
-        await ctx.reply(`Image ${imageId} is already in this album.`);
+        await ctx.reply(tr("album_add_exists", ctx));
       }
 
       await showAlbum(ctx, userId, addAlbumId, 1);
@@ -373,11 +377,11 @@ export function registerAlbums(bot: any) {
     createState.delete(userId);
     const albumId = await createAlbum(userId, create.name, "");
     const kb = new InlineKeyboard()
-      .text("Add Images", `album_add:${albumId}`)
-      .text("View Album", `album_view:${albumId}`)
+      .text(tr("album_add_images", ctx), `album_add:${albumId}`)
+      .text(tr("btn_view_album", ctx), `album_view:${albumId}`)
       .row()
-      .text("My Albums", "albums:list");
-    await ctx.reply(`✅ Album "${create.name}" created!`, { reply_markup: kb });
+      .text(tr("btn_my_albums", ctx), "albums:list");
+    await ctx.reply(tr("albums_created", ctx), { reply_markup: kb });
   });
 }
 
@@ -386,11 +390,10 @@ async function showAlbums(ctx: Context, telegramId: number) {
 
   if (!albums.length) {
     const kb = new InlineKeyboard()
-      .text("➕ Create Album", "albums:create")
+      .text(tr("album_new", ctx), "albums:create")
       .row()
       .text(`${tr("btn_back_to_menu", ctx)}`, "cmd:main");
-    const text =
-      "No albums yet.\n\nCreate albums to organize your favorite images into themed collections!";
+    const text = tr("albums_empty", ctx);
     if (ctx.callbackQuery) {
       await ctx
         .editMessageText(text, { reply_markup: kb })
@@ -401,9 +404,9 @@ async function showAlbums(ctx: Context, telegramId: number) {
     return;
   }
 
-  let text = `Your Albums (${albums.length})\n\n`;
+  let text = `${tr("albums_title", ctx)} (${albums.length})\n\n`;
   for (const a of albums) {
-    text += `${a.name} — ${a.image_count} images\n`;
+    text += `${a.name} — ${a.image_count} ${tr("images", ctx)}\n`;
     if (a.description) text += `   ${a.description}\n`;
   }
 
@@ -411,7 +414,7 @@ async function showAlbums(ctx: Context, telegramId: number) {
   for (const a of albums) {
     kb.text(`${a.name} (${a.image_count})`, `album_view:${a.id}`).row();
   }
-  kb.text("Create New Album", "albums:create").row();
+  kb.text(tr("album_new", ctx), "albums:create").row();
   kb.text(`${tr("btn_back_to_menu", ctx)}`, "cmd:main");
 
   if (ctx.callbackQuery) {
@@ -431,8 +434,11 @@ async function showAlbum(
 ) {
   const album = await getAlbum(albumId);
   if (!album || album.user_id !== telegramId) {
-    await ctx.reply("Album not found.", {
-      reply_markup: new InlineKeyboard().text("📚 My Albums", "albums:list"),
+    await ctx.reply(tr("album_notfound", ctx), {
+      reply_markup: new InlineKeyboard().text(
+        tr("btn_my_albums", ctx),
+        "albums:list",
+      ),
     });
     return;
   }
@@ -444,10 +450,10 @@ async function showAlbum(
 
   let text = `${album.name}`;
   if (album.description) text += `\n${album.description}`;
-  text += `\n${total} images — Page ${page}/${totalPages || 1}\n`;
+  text += `\n${total} ${tr("images", ctx)} — ${tr("fav_page", ctx)} ${page}/${totalPages || 1}\n`;
 
   if (!images.length) {
-    text += `\n(empty — add images to get started)`;
+    text += `\n(${tr("album_images_empty", ctx)})`;
   } else {
     for (const img of images) {
       text += `\n• Image #${img.image_id}`;
@@ -457,24 +463,28 @@ async function showAlbum(
   const kb = new InlineKeyboard();
   for (const img of images) {
     kb.text(
-      `Image ${img.image_id}`,
+      `${tr("group_images", ctx)} ${img.image_id}`,
       `album_img:${albumId}:${img.image_id}`,
     ).row();
-    kb.text(`  ❌ Remove`, `album_remove:${albumId}:${img.image_id}`).row();
+    kb.text(
+      tr("group_images", ctx),
+      `album_remove:${albumId}:${img.image_id}`,
+    ).row();
   }
 
   kb.row()
-    .text("Add Image", `album_add:${albumId}`)
-    .text("Delete Album", `album_del:${albumId}`);
-  kb.row().text("🔗 Share Album", `album_share:${albumId}`);
+    .text(tr("albums_pick_1", ctx), `album_add:${albumId}`)
+    .text(tr("btn_delete_album", ctx), `album_del:${albumId}`);
+  kb.row().text(tr("btn_share_album", ctx), `album_share:${albumId}`);
   if (totalPages > 1) {
     kb.row();
-    if (page > 1) kb.text("◀Prev", `album_page:${albumId}:${page - 1}`);
+    if (page > 1)
+      kb.text(tr("prev_page", ctx), `album_page:${albumId}:${page - 1}`);
     if (page < totalPages)
-      kb.text(`▶${tr("next_page", ctx)}`, `album_page:${albumId}:${page + 1}`);
+      kb.text(tr("next_page", ctx), `album_page:${albumId}:${page + 1}`);
   }
   kb.row()
-    .text("All Albums", "albums:list")
+    .text(tr("album_all", ctx), "albums:list")
     .text(tr("btn_menu", ctx), "cmd:main");
 
   if (ctx.callbackQuery) {
@@ -489,7 +499,7 @@ async function showAlbum(
 async function showSharedAlbum(ctx: Context, token: string, page: number) {
   const album = await getAlbumByShareToken(token);
   if (!album) {
-    await ctx.reply("Album not found or link expired.", {
+    await ctx.reply(tr("album_notfoundexp", ctx), {
       reply_markup: new InlineKeyboard().text(tr("btn_menu", ctx), "cmd:main"),
     });
     return;
@@ -500,35 +510,35 @@ async function showSharedAlbum(ctx: Context, token: string, page: number) {
   ).getUser(album.user_id);
   const ownerName = owner?.username
     ? `@${owner.username}`
-    : owner?.first_name || "Unknown";
+    : owner?.first_name || tr("artist_unknown", ctx);
 
   const perPage = 5;
   const total = await getAlbumImageCount(album.id);
   const images = await getAlbumImages(album.id, perPage, (page - 1) * perPage);
   const totalPages = Math.ceil(total / perPage);
 
-  let text = `🔗 Shared Album\n\n`;
+  let text = `${tr("btn_share_album", ctx)}\n\n`;
   text += `${album.name}`;
   if (album.description) text += `\n${album.description}`;
-  text += `\nOwner: ${ownerName}`;
-  text += `\n${total} images — Page ${page}/${totalPages || 1}\n`;
+  text += `\n${tr("albums_owner", ctx)}: ${ownerName}`;
+  text += `\n${total} ${tr("group_images", ctx)} - ${tr("tags_page", ctx)} ${page}/${totalPages || 1}\n`;
 
   if (!images.length) {
-    text += `\n(empty)`;
+    text += `\n(${tr("album_empty", ctx)})`;
   } else {
     for (const img of images) {
-      text += `\nImage #${img.image_id}`;
+      text += `\n${tr("group_images", ctx)} #${img.image_id}`;
     }
   }
 
   const kb = new InlineKeyboard();
   for (const img of images) {
     kb.text(
-      `Image ${img.image_id}`,
+      `${tr("group_images", ctx)} ${img.image_id}`,
       `album_img:${album.id}:${img.image_id}`,
     ).row();
   }
-  kb.text("Copy to My Albums", `album_copy:${album.id}`).row();
+  kb.text(tr("btn_copy_album", ctx), `album_copy:${album.id}`).row();
   if (totalPages > 1) {
     if (page > 1)
       kb.text(
@@ -542,7 +552,7 @@ async function showSharedAlbum(ctx: Context, token: string, page: number) {
       );
   }
   kb.row()
-    .text("My Albums", "albums:list")
+    .text(tr("btn_my_albums", ctx), "albums:list")
     .text(tr("btn_menu", ctx), "cmd:main");
 
   if (ctx.callbackQuery) {

@@ -152,9 +152,8 @@ async function performSearch(ctx: Context, tags: string[], page: number) {
       const artists =
         img.artists.map((a) => a.name).join(", ") || tr("artist_unknown", ctx);
       const imgTags = img.tags.map((t) => t.name).join(", ");
-      text += `🖼️ ${tr("image_id", ctx)}: ${img.id} | 🎨 ${artists} | 🏷️ ${imgTags}`;
-      if (img.source)
-        text += `\n  🔗 [${tr("image_source", ctx)}](${img.source})`;
+      text += `${tr("image_id", ctx)}: ${img.id} | ${artists} | ${imgTags}`;
+      if (img.source) text += `\n  [${tr("image_source", ctx)}](${img.source})`;
       text += `\n`;
     }
 

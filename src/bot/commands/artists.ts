@@ -208,7 +208,7 @@ async function searchArtistByName(ctx: Context, query: string) {
     for (const a of matching.slice(0, 15)) {
       kb.text(`🎨 ${a.name}`, `artist_images:${a.id}`).row();
     }
-    kb.row().text("🔍 Search Again", "artists:search");
+    kb.row().text(tr("btn_search_artist_again", ctx), "artists:search");
     kb.text("🎨 All Artists", "cmd:artists").text(
       tr("btn_menu", ctx),
       "cmd:main",
@@ -244,7 +244,7 @@ async function showArtistsPage(ctx: Context, artists: any[], page: number) {
     kb.text(`🎨 ${artist.name}`, `artist_images:${artist.id}`).row();
   }
 
-  kb.row().text("🔍 Search Artist", "artists:search");
+  kb.row().text(tr("btn_search_artist_again", ctx), "artists:search");
   if (totalPages > 1) {
     kb.row();
     if (page > 1)
