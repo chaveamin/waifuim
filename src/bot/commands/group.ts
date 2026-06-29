@@ -1,12 +1,8 @@
 import { Context } from "grammy";
 import { InlineKeyboard } from "grammy";
 import { searchImages } from "../../api/waifu.js";
-import { getUser, isFavorited } from "../../db/queries.js";
-import {
-  buildImageCaption,
-  buildImageKb,
-  buildSearchParams,
-} from "../../utils/imageHelpers.js";
+import { getUser } from "../../db/queries.js";
+import { buildSearchParams } from "../../utils/imageHelpers.js";
 import { tr } from "../../i18n/index.js";
 import { logger } from "../../utils/logger.js";
 
@@ -70,7 +66,7 @@ export async function sendGroup(ctx: Context) {
       .text(tr("btn_change_settings", ctx), "cmd:settings")
       .text(tr("btn_menu", ctx), "cmd:main");
 
-    const doneText = `✅ Sent ${images.length} images.`;
+    const doneText = tr("group_sent", ctx);
     if (ctx.callbackQuery) {
       await ctx
         .editMessageText(doneText, { reply_markup: kb })
@@ -79,7 +75,7 @@ export async function sendGroup(ctx: Context) {
       await ctx.reply(doneText, { reply_markup: kb });
     }
   } catch (err) {
-    logger.error("Group send error:", err);
+    logger.error(tr("group_err", ctx), err);
     await ctx.reply(tr("group_failed", ctx), {
       reply_markup: new InlineKeyboard().text(
         tr("btn_back_to_menu", ctx),

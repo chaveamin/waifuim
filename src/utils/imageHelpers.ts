@@ -55,7 +55,7 @@ export function buildImageKb(
     .row();
   if (artistId) {
     kb.text(
-      `🎨 Another from ${truncate(artistName ?? "Artist", 15)}`,
+      `${tr("artist_another", ctx)} ${truncate(artistName ?? "Artist", 15)}`,
       `artist_random:${artistId}`,
     );
   }

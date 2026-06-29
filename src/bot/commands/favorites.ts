@@ -47,7 +47,7 @@ export function registerFavorites(bot: any) {
         parse_mode: "Markdown",
       });
     } catch (err) {
-      logger.error("Fav view error:", err);
+      logger.error(tr("fav_view_err", ctx), err);
       await ctx.reply(tr("image_not_found", ctx), {
         reply_markup: new InlineKeyboard().text(
           tr("btn_back_to_menu", ctx),
@@ -100,16 +100,16 @@ async function showFavorites(ctx: Context, userId: number, page: number) {
   }
 
   let text = `${tr("fav_title", ctx)} (${total}, Page ${page}/${totalPages})\n\n`;
-  for (const f of favs) text += `• 🖼️ #${f.image_id}\n`;
+  for (const f of favs) text += `#${f.image_id}\n`;
 
   const kb = new InlineKeyboard();
   for (const f of favs)
-    kb.text(`🖼️ ${f.image_id}`, `fav_view:${f.image_id}`).row();
+    kb.text(`${f.image_id}`, `fav_view:${f.image_id}`).row();
   kb.row().text(tr("btn_back_to_menu", ctx), "cmd:main");
   if (totalPages > 1) {
-    if (page > 1) kb.text(`◀️ ${tr("prev_page", ctx)}`, `fav_page:${page - 1}`);
+    if (page > 1) kb.text(`${tr("prev_page", ctx)}`, `fav_page:${page - 1}`);
     if (page < totalPages)
-      kb.text(`▶️ ${tr("next_page", ctx)}`, `fav_page:${page + 1}`);
+      kb.text(`${tr("next_page", ctx)}`, `fav_page:${page + 1}`);
   }
 
   if (ctx.callbackQuery) {

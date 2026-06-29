@@ -403,7 +403,6 @@ async function handleHelp(ctx: Context) {
   const isAdmin = !!(
     config.adminTelegramId && ctx.from?.id === config.adminTelegramId
   );
-  const adminText = isAdmin;
 
   const kb = new InlineKeyboard()
     .text(tr("btn_random", ctx), "cmd:random")
@@ -425,7 +424,7 @@ async function handleHelp(ctx: Context) {
 
   if (isAdmin) kb.row().text(tr("btn_admin_panel", ctx), "cmd:admin");
 
-  await editOrSend(ctx, text + adminText, { reply_markup: kb });
+  await editOrSend(ctx, text, { reply_markup: kb });
 }
 
 async function handleFavorites(ctx: Context) {

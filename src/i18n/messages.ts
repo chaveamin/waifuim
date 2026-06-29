@@ -122,7 +122,7 @@ export const messages: Record<string, Record<Lang, string>> = {
   btn_search_artist: { en: "🔍 Search Artist", fa: "🔍 جستجوی آرتیست" },
   btn_search_artist_again: { en: "🔍 Search Again", fa: "🔍 جستجوی دوباره" },
   btn_all_artists: { en: "🎨 All Artists", fa: "🎨 همه آرتیست‌ها" },
-  btn_fav: { en: "❤️ Favorite", fa: "❤️ علاقه‌مندی" },
+  btn_fav: { en: "❤️ Favorite", fa: "❤️ افزودن به علاقه‌مندی" },
   btn_unfav: { en: "💔 Unfavorite", fa: "💔 حذف از علاقه‌مندی" },
   btn_albums_pick: { en: "📚 Add to Album", fa: "📚 افزودن به آلبوم" },
   btn_create_album: { en: "➕ Create Album", fa: "➕ ساخت آلبوم" },
@@ -267,6 +267,7 @@ export const messages: Record<string, Record<Lang, string>> = {
     fa: "یه 5 ثانیه دیگه صبر کن.",
   },
   group_images: { en: "images", fa: "عکس" },
+  group_err: { en: "Group send error", fa: "خطا در ارسال گروهی" },
   daily_title: { en: "📅 Daily Image", fa: "📅 عکس روزانه" },
   daily_subscribed: { en: "Subscribed", fa: "فعال" },
   daily_not_subscribed: { en: "Not subscribed", fa: "غیرفعال" },
@@ -288,6 +289,10 @@ export const messages: Record<string, Record<Lang, string>> = {
   fav_empty: {
     en: "No favorites yet.\n\nBrowse images and tap ❤️ to add favorites!",
     fa: "هنوز علاقه‌مندی ندارید.\n\nتصاویر را مرور کنید و ❤️ را بزنید!",
+  },
+  fav_view_err: {
+    en: "Fav view error:",
+    fa: "خطای نمایش علاقه‌مندیها:",
   },
   fav_page: { en: "Page", fa: "صفحه" },
   profile_title: { en: "Your Profile", fa: "پروفایل شما" },
