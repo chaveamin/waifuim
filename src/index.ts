@@ -1,5 +1,5 @@
 import { bot } from "./bot/bot.js";
-import { config } from "./config.js";
+import { Context } from "grammy";
 import { authMiddleware } from "./bot/middleware/auth.js";
 import { registerStart } from "./bot/commands/start.js";
 import { registerHelp } from "./bot/commands/help.js";

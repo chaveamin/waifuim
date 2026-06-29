@@ -6,7 +6,8 @@ import { formatBytes } from "./formatters.js";
 import { tr } from "../i18n/index.js";
 
 export function buildImageCaption(image: WaifuImage, ctx?: any): string {
-  const artists = image.artists.map((a) => a.name).join(", ") || "Unknown";
+  const artists =
+    image.artists.map((a) => a.name).join(", ") || tr("artist_unknown", ctx);
   const tags = image.tags.map((t) => t.name).join(", ");
   const tFn = (key: string) =>
     ctx
@@ -32,9 +33,9 @@ export function buildImageCaption(image: WaifuImage, ctx?: any): string {
     `${tFn("image_tags")}: ${tags}\n` +
     `${tFn("image_size")}: ${formatBytes(image.byteSize)}\n` +
     (image.isAnimated ? ` (${tFn("image_animated")})` : "") +
-    `\n❤️ ${tFn("image_favorites")}: ${image.favorites}`;
+    `\n${tFn("image_favorites")}: ${image.favorites}`;
   if (image.source) {
-    caption += `\n🔗 [${tr("image_source", ctx)}](${image.source})`;
+    caption += `\n[${tr("image_source", ctx)}](${image.source})`;
   }
   return caption;
 }
@@ -80,7 +81,7 @@ export function buildMiniImageKb(
       isFavorited ? "💔 Unfavorite" : "❤️ Favorite",
       `fav_toggle:${imageId}`,
     )
-    .text("📚 Albums", `pick_album:${imageId}`)
+    .text(tr("btn_albums_pick", ctx), `pick_album:${imageId}`)
     .row()
     .text(tr("btn_menu", ctx), "cmd:main");
 }

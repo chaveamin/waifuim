@@ -1,5 +1,3 @@
-import { Context } from "grammy";
-
 export type D1Database = {
   prepare(sql: string): D1Statement;
   exec(sql: string): void;
