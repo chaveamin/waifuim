@@ -68,27 +68,30 @@ export function registerArtists(bot: any) {
             parse_mode: "Markdown",
           });
         } else {
-          let text = `🎨 ${artistName ?? `Artist #${artistId}`} — ${result.items.length} images:\n\n`;
+          let text = `${artistName ?? `Artist #${artistId}`} - ${result.items.length} ${tr("group_images", ctx)}:\n\n`;
           for (const img of result.items) {
             const imgTags = img.tags.map((t) => t.name).join(", ");
-            text += `• 🖼️ ID: ${img.id} | 🏷️ ${imgTags}\n`;
+            text += `• ${img.id} | ${imgTags}\n`;
           }
           const kb = new InlineKeyboard();
           for (const img of result.items) {
-            kb.text(`🖼️ Image ${img.id}`, `img_detail:${img.id}`).row();
+            kb.text(
+              `${tr("group_images", ctx)} ${img.id}`,
+              `img_detail:${img.id}`,
+            ).row();
           }
           kb.text(
-            `🎨 Another from ${artistName ?? "Artist"}`,
+            `${tr("artist_another", ctx)} ${artistName ?? "Artist"}`,
             `artist_random:${artistId}`,
           ).row();
-          kb.text("🎨 Artists", "cmd:artists").text(
+          kb.text(tr("artist_back", ctx), "cmd:artists").text(
             tr("btn_menu", ctx),
             "cmd:main",
           );
           await ctx.reply(text, { reply_markup: kb });
         }
       } else {
-        await ctx.reply("No images found for this artist.", {
+        await ctx.reply(tr("artist_no_images", ctx), {
           reply_markup: new InlineKeyboard().text(
             `${tr("btn_back_to_menu", ctx)}`,
             "cmd:main",
@@ -96,7 +99,7 @@ export function registerArtists(bot: any) {
         });
       }
     } catch {
-      await ctx.reply("Failed to fetch artist images.", {
+      await ctx.reply(tr("artists_img_failed", ctx), {
         reply_markup: new InlineKeyboard().text(
           `${tr("btn_back_to_menu", ctx)}`,
           "cmd:main",
@@ -123,7 +126,7 @@ export function registerArtists(bot: any) {
       const result = await searchImages(params);
 
       if (!result.items.length) {
-        await ctx.reply("No more images from this artist.", {
+        await ctx.reply(tr("artists_imgs_end", ctx), {
           reply_markup: new InlineKeyboard().text(
             `${tr("btn_back_to_menu", ctx)}`,
             "cmd:main",
@@ -142,7 +145,7 @@ export function registerArtists(bot: any) {
         parse_mode: "Markdown",
       });
     } catch {
-      await ctx.reply("Failed to fetch image.", {
+      await ctx.reply(tr("random_failed", ctx), {
         reply_markup: new InlineKeyboard().text(
           `${tr("btn_back_to_menu", ctx)}`,
           "cmd:main",
@@ -156,8 +159,8 @@ export function registerArtists(bot: any) {
     const userId = ctx.from?.id;
     if (!userId) return;
     searchState.set(userId, true);
-    const kb = new InlineKeyboard().text("❌ Cancel", "cmd:artists");
-    await ctx.reply("🔍 Send an artist name to search:", { reply_markup: kb });
+    const kb = new InlineKeyboard().text(tr("btn_cancel", ctx), "cmd:artists");
+    await ctx.reply(tr("artists_search_prompt", ctx), { reply_markup: kb });
   });
 
   bot.callbackQuery(/^artist_name:(.+)$/, async (ctx: Context) => {
@@ -191,25 +194,25 @@ async function searchArtistByName(ctx: Context, query: string) {
     );
 
     if (!matching.length) {
-      await ctx.reply(`No artists found matching "${query}".`, {
+      await ctx.reply(tr("inline_no_results", ctx), {
         reply_markup: new InlineKeyboard()
-          .text("🎨 Artists", "cmd:artists")
+          .text(tr("artist_back", ctx), "cmd:artists")
           .text(tr("btn_menu", ctx), "cmd:main"),
       });
       return;
     }
 
-    let text = `🔍 Artists matching "${query}" (${matching.length} found):\n\n`;
+    let text = `${tr("artist_found", ctx)} "${query}" (${matching.length} ${tr("found", ctx)}):\n\n`;
     for (const a of matching.slice(0, 15)) {
-      text += `• ${a.name} (ID: ${a.id})\n`;
+      text += `• ${a.name} (${tr("image_id", ctx)}: ${a.id})\n`;
     }
 
     const kb = new InlineKeyboard();
     for (const a of matching.slice(0, 15)) {
-      kb.text(`🎨 ${a.name}`, `artist_images:${a.id}`).row();
+      kb.text(`${a.name}`, `artist_images:${a.id}`).row();
     }
     kb.row().text(tr("btn_search_artist_again", ctx), "artists:search");
-    kb.text("🎨 All Artists", "cmd:artists").text(
+    kb.text(tr("artist_back", ctx), "cmd:artists").text(
       tr("btn_menu", ctx),
       "cmd:main",
     );
@@ -222,8 +225,8 @@ async function searchArtistByName(ctx: Context, query: string) {
       await ctx.reply(text, { reply_markup: kb });
     }
   } catch (err) {
-    logger.error("Artist search error:", err);
-    await ctx.reply("Failed to search artists.", {
+    logger.error(tr("artist_searcherr", ctx), err);
+    await ctx.reply(tr("artist_search_faild", ctx), {
       reply_markup: new InlineKeyboard().text(
         `${tr("btn_back_to_menu", ctx)}`,
         "cmd:main",
@@ -234,23 +237,23 @@ async function searchArtistByName(ctx: Context, query: string) {
 
 async function showArtistsPage(ctx: Context, artists: any[], page: number) {
   const { items, totalPages } = paginateArray(artists, page, 15);
-  let text = `🎨 Artists (Page ${page}/${totalPages}, ${artists.length} total):\n\n`;
+  let text = `${tr("btn_artists", ctx)} (${tr("tags_page", ctx)} ${page}/${totalPages}, ${artists.length} ${tr("tags_total", ctx)}):\n\n`;
   for (const artist of items) {
-    text += `🎨 ${artist.name} (ID: ${artist.id})\n`;
+    text += `${artist.name} (${tr("image_id", ctx)}: ${artist.id})\n`;
   }
 
   const kb = new InlineKeyboard();
   for (const artist of items) {
-    kb.text(`🎨 ${artist.name}`, `artist_images:${artist.id}`).row();
+    kb.text(`${artist.name}`, `artist_images:${artist.id}`).row();
   }
 
   kb.row().text(tr("btn_search_artist_again", ctx), "artists:search");
   if (totalPages > 1) {
     kb.row();
     if (page > 1)
-      kb.text(`⬅️ ${tr("prev_page", ctx)}`, `artists_page:${page - 1}`);
+      kb.text(`${tr("prev_page", ctx)}`, `artists_page:${page - 1}`);
     if (page < totalPages)
-      kb.text(`➡️ ${tr("next_page", ctx)}`, `artists_page:${page + 1}`);
+      kb.text(`${tr("next_page", ctx)}`, `artists_page:${page + 1}`);
   }
   kb.row().text(`${tr("btn_back_to_menu", ctx)}`, "cmd:main");
 
