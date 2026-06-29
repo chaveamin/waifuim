@@ -31,7 +31,7 @@ export function registerInlineMode(bot: any) {
         const caption =
           `🎨 ${artists}\n` +
           `🏷️ ${tagNames}\n` +
-          `🖼️ ID: ${img.id} | ${img.width}x${img.height}` +
+          `#${img.id}` +
           (img.isAnimated ? " (GIF)" : "") +
           `\n❤️ ${img.favorites} favorites`;
 
@@ -40,8 +40,8 @@ export function registerInlineMode(bot: any) {
           id: String(img.id),
           photo_url: img.url,
           thumbnail_url: img.url,
-          title: `🖼️ Image ${img.id}`,
-          description: `🎨 ${artists} | 🏷️ ${tagNames}`,
+          title: `#${img.id}`,
+          description: `${artists} | ${tagNames}`,
           caption,
         };
       });

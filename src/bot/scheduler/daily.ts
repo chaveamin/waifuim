@@ -1,4 +1,4 @@
-import { Bot } from "grammy";
+import { Bot, Context } from "grammy";
 import { searchImages } from "../../api/waifu.js";
 import { getDailySubscribers, markDailySent } from "../../db/queries.js";
 import {
@@ -6,8 +6,9 @@ import {
   buildSearchParams,
 } from "../../utils/imageHelpers.js";
 import { logger } from "../../utils/logger.js";
+import { tr } from "../../i18n/index.js";
 
-export function startDailyScheduler(bot: Bot) {
+export function startDailyScheduler(bot: Bot, ctx: Context) {
   setInterval(async () => {
     try {
       await sendDailyImages(bot);
@@ -16,10 +17,10 @@ export function startDailyScheduler(bot: Bot) {
     }
   }, 60_000);
 
-  logger.info("Daily image scheduler started (checks every 60s)");
+  logger.info(tr("daily_check", ctx));
 }
 
-async function sendDailyImages(bot: Bot) {
+async function sendDailyImages(bot: Bot, ctx: Context) {
   const now = new Date();
   const currentHour = now.getHours();
   const currentMinute = now.getMinutes();
@@ -43,7 +44,7 @@ async function sendDailyImages(bot: Bot) {
       const caption = buildImageCaption(image);
 
       const dailyOptions = {
-        caption: `Good Morning! Here's your daily waifu.\n\n${caption}`,
+        caption: `${tr("daily_img", ctx)}\n\n${caption}`,
         parse_mode: "Markdown" as const,
       };
 

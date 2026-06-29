@@ -469,4 +469,17 @@ export const messages: Record<string, Record<Lang, string>> = {
   inline_no_results: { en: "No results found.", fa: "نتیجه‌ای یافت نشد." },
   next_page: { en: "Next", fa: "بعدی" },
   prev_page: { en: "Prev", fa: "قبلی" },
+  op_cancel: { en: "Operation cancelled", fa: "عملیات لغو شد" },
+  user_banned: {
+    en: "You are banned from using this bot",
+    fa: "شما از استفاده از این ربات بن شده‌اید",
+  },
+  daily_check: {
+    en: "Daily image scheduler started (checks every 60s)",
+    fa: "زمان‌بندی عکس روزانه شروع شد (هر 60 ثانیه بررسی میشود)",
+  },
+  daily_img: {
+    en: "Good Morning! Here's your daily waifu",
+    fa: "صبح عالی بخیر! این هم از وایفوی روزانه شما.",
+  },
 };

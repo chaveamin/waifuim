@@ -1,4 +1,5 @@
 import { Context } from "grammy";
+import { tr } from "../../i18n/index.js";
 
 export function registerCancelHandler(bot: any) {
   bot.command("cancel", async (ctx: Context) => {
@@ -9,7 +10,7 @@ export function registerCancelHandler(bot: any) {
     const state = getBroadcastState();
     if (state.has(userId)) {
       state.delete(userId);
-      await ctx.reply("Operation cancelled.");
+      await ctx.reply(tr("op_cancel", ctx));
       return;
     }
 
