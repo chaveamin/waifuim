@@ -1,7 +1,7 @@
 import { Context } from "grammy";
 import { InlineKeyboard } from "grammy";
 import { searchImages } from "../../api/waifu.js";
-import { getUser } from "../../db/queries.js";
+import { getUser, isFavorited } from "../../db/queries.js";
 import { buildSearchParams } from "../../utils/imageHelpers.js";
 import { tr } from "../../i18n/index.js";
 import { logger } from "../../utils/logger.js";
@@ -55,19 +55,32 @@ export async function sendGroup(ctx: Context) {
     }));
     await ctx.replyWithMediaGroup(media);
 
-    const kb = new InlineKeyboard()
-      .text(tr("btn_another_group", ctx), "cmd:group")
+    let text = `${images.length} ${tr("group_sent", ctx)}\n\n`;
+    for (const img of images) {
+      const artists = img.artists.map((a) => a.name).join(", ") || "Unknown";
+      text += `#${img.id} - ${tr("image_artist", ctx)}: ${artists}\n`;
+    }
+
+    const kb = new InlineKeyboard();
+    for (const img of images) {
+      const fav = await isFavorited(userId, img.id);
+      kb.text(
+        fav ? tr("btn_unfav", ctx) : tr("btn_fav", ctx),
+        `fav_toggle:${img.id}`,
+      );
+      kb.text(tr("btn_albums_pick", ctx), `pick_album:${img.id}`).row();
+    }
+    kb.text(tr("btn_another_group", ctx), "cmd:group")
       .row()
       .text(tr("btn_change_settings", ctx), "cmd:settings")
       .text(tr("btn_menu", ctx), "cmd:main");
 
-    const doneText = `${images.length} ${tr("group_sent", ctx)}`;
     if (ctx.callbackQuery) {
       await ctx
-        .editMessageText(doneText, { reply_markup: kb })
-        .catch(() => ctx.reply(doneText, { reply_markup: kb }));
+        .editMessageText(text, { reply_markup: kb })
+        .catch(() => ctx.reply(text, { reply_markup: kb }));
     } else {
-      await ctx.reply(doneText, { reply_markup: kb });
+      await ctx.reply(text, { reply_markup: kb });
     }
   } catch (err) {
     logger.error(tr("group_err", ctx), err);

@@ -67,12 +67,23 @@ export function registerFavorites(bot: any) {
     await ctx.answerCallbackQuery({
       text: added ? `❤️ +1 (${count})` : `💔 -1 (${count})`,
     });
-    try {
-      const image = await getImageById(imageId);
-      const fav = await isFavorited(userId, image.id);
-      const kb = buildMiniImageKb(image.id, fav, ctx);
-      await ctx.editMessageReplyMarkup({ reply_markup: kb }).catch(() => {});
-    } catch {}
+    const currentMarkup = ctx.message?.reply_markup;
+    if (currentMarkup && "inline_keyboard" in currentMarkup) {
+      const newRows = currentMarkup.inline_keyboard.map((row: any[]) =>
+        row.map((btn: any) => {
+          if (btn.callback_data === `fav_toggle:${imageId}`) {
+            return {
+              ...btn,
+              text: added ? tr("btn_unfav", ctx) : tr("fav", ctx),
+            };
+          }
+          return btn;
+        }),
+      );
+      await ctx
+        .editMessageReplyMarkup({ reply_markup: { inline_keyboard: newRows } })
+        .catch(() => {});
+    }
   });
 }
 
