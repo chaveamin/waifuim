@@ -211,7 +211,7 @@ async function searchArtistByName(ctx: Context, query: string) {
     for (const a of matching.slice(0, 15)) {
       kb.text(`${a.name}`, `artist_images:${a.id}`).row();
     }
-    kb.row().text(tr("btn_search_artist_again", ctx), "artists:search");
+    kb.row().text(tr("btn_search_artist", ctx), "artists:search");
     kb.text(tr("artist_back", ctx), "cmd:artists").text(
       tr("btn_menu", ctx),
       "cmd:main",
@@ -235,7 +235,11 @@ async function searchArtistByName(ctx: Context, query: string) {
   }
 }
 
-async function showArtistsPage(ctx: Context, artists: any[], page: number) {
+export async function showArtistsPage(
+  ctx: Context,
+  artists: any[],
+  page: number,
+) {
   const { items, totalPages } = paginateArray(artists, page, 15);
   let text = `${tr("btn_artists", ctx)} (${tr("tags_page", ctx)} ${page}/${totalPages}, ${artists.length} ${tr("tags_total", ctx)}):\n\n`;
   for (const artist of items) {
@@ -247,7 +251,7 @@ async function showArtistsPage(ctx: Context, artists: any[], page: number) {
     kb.text(`${artist.name}`, `artist_images:${artist.id}`).row();
   }
 
-  kb.row().text(tr("btn_search_artist_again", ctx), "artists:search");
+  kb.row().text(tr("btn_search_artist", ctx), "artists:search");
   if (totalPages > 1) {
     kb.row();
     if (page > 1)

@@ -18,6 +18,7 @@ import {
 import { logger } from "../../utils/logger.js";
 import { tr, t, getLang } from "../../i18n/index.js";
 import { showMainMenu } from "../commands/start.js";
+import { showArtistsPage } from "../commands/artists.js";
 import { replyWithMediaUniversal } from "../../utils/imageHelpers.js";
 
 export function registerCallbackHandlers(bot: any) {
@@ -175,17 +176,7 @@ async function handleTags(ctx: Context) {
 async function handleArtists(ctx: Context) {
   try {
     const artists = await getArtists();
-    const { items, totalPages } = paginateArray(artists, 1, 15);
-    let text = `${tr("artists_title", ctx)} (Page 1/${totalPages}, ${artists.length}):\n\n`;
-    for (const a of items) text += `• ${a.name} (ID: ${a.id})\n`;
-
-    const kb = new InlineKeyboard();
-    for (const a of items)
-      kb.text(`🎨 ${a.name}`, `artist_images:${a.id}`).row();
-    kb.row().text(tr("btn_back_to_menu", ctx), "cmd:main");
-    if (totalPages > 1) kb.text("▶️ Next", "artists_page:2");
-
-    await editOrSend(ctx, text, { reply_markup: kb });
+    await showArtistsPage(ctx, artists, 1);
   } catch (err) {
     logger.error("Artists error:", err);
     await editOrSend(ctx, tr("artists_failed", ctx), {

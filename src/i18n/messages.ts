@@ -268,8 +268,8 @@ export const messages: Record<string, Record<Lang, string>> = {
   },
   group_images: { en: "images", fa: "عکس" },
   daily_title: { en: "📅 Daily Image", fa: "📅 عکس روزانه" },
-  daily_subscribed: { en: "Subscribed", fa: "اشتراک فعال" },
-  daily_not_subscribed: { en: "Not subscribed", fa: "اشتراک غیرفعال" },
+  daily_subscribed: { en: "Subscribed", fa: "فعال" },
+  daily_not_subscribed: { en: "Not subscribed", fa: "غیرفعال" },
   daily_send_time: { en: "Send time", fa: "زمان ارسال" },
   daily_desc: {
     en: "You'll receive a random image every day at the scheduled time.",
@@ -277,11 +277,11 @@ export const messages: Record<string, Record<Lang, string>> = {
   },
   daily_not_desc: {
     en: "Subscribe to get a random image delivered daily!",
-    fa: "این ویژگی را فعال کنید تا هر روز یک عکس تصادفی دریافت کنید!",
+    fa: "این ویژگی را فعال کنید تا هر روز یک عکس تصادفی دریافت کنید",
   },
   daily_subscribed_text: {
     en: "Subscribed to daily images!",
-    fa: "اشتراک تصاویر روزانه فعال شد!",
+    fa: "اشتراک تصاویر روزانه فعال شد",
   },
   daily_unsubscribed: { en: "Unsubscribed.", fa: "اشتراک لغو شد." },
   fav_title: { en: "❤️ Your Favorites", fa: "❤️ علاقه‌مندی‌های شما" },
