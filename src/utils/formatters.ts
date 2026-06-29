@@ -1,3 +1,6 @@
+import { getLang } from "../i18n/index.js";
+import { Context } from "grammy";
+
 export function escapeMarkdown(text: string): string {
   return text.replace(/[_*[\]()~`>#+\-=|{}.!]/g, "\\$&");
 }
@@ -8,9 +11,10 @@ export function formatBytes(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-export function formatDate(dateStr: string): string {
+export function formatDate(dateStr: string, ctx: Context): string {
   const d = new Date(dateStr);
-  return d.toLocaleDateString("en-US", {
+  const lang = getLang(ctx);
+  return d.toLocaleDateString(lang === "fa" ? "fa-IR" : "en-US", {
     year: "numeric",
     month: "short",
     day: "numeric",
@@ -24,7 +28,11 @@ export function truncate(text: string, maxLen: number): string {
   return text.slice(0, maxLen - 3) + "...";
 }
 
-export function paginateArray<T>(arr: T[], page: number, perPage: number): { items: T[]; totalPages: number; page: number } {
+export function paginateArray<T>(
+  arr: T[],
+  page: number,
+  perPage: number,
+): { items: T[]; totalPages: number; page: number } {
   const totalPages = Math.ceil(arr.length / perPage);
   const p = Math.max(1, Math.min(page, totalPages));
   return {
