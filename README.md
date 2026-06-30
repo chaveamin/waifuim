@@ -137,4 +137,4 @@ The bot uses SQLite with the following tables:
 
 ## License
 
-MIT
+[Apache](LICENSE)
