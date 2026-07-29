@@ -20,8 +20,20 @@ import { tr, t, getLang } from "../../i18n/index.js";
 import { showMainMenu } from "../commands/start.js";
 import { showArtistsPage } from "../commands/artists.js";
 import { replyWithMediaUniversal } from "../../utils/imageHelpers.js";
+import { handleAnimeShotsCallback } from "../commands/animeShots.js";
 
 export function registerCallbackHandlers(bot: any) {
+  bot.callbackQuery(/^anime_shots/, async (ctx: Context) => {
+    const data = ctx.callbackQuery?.data;
+    if (!data) return;
+    try {
+      await ctx.answerCallbackQuery();
+      await handleAnimeShotsCallback(ctx, data);
+    } catch (err: any) {
+      logger.error("anime_shots callback error:", err);
+    }
+  });
+
   bot.callbackQuery(/^cmd:(.+)$/, async (ctx: Context) => {
     const cmd = ctx.match![1];
     try {
@@ -426,8 +438,8 @@ async function handleHelp(ctx: Context) {
     .row()
     .text(tr("btn_profile", ctx), "cmd:profile")
     .text(tr("btn_settings", ctx), "cmd:settings")
-    .row()
-    .text(tr("btn_leaderboard", ctx), "cmd:leaderboard");
+    .row();
+  // .text(tr("btn_leaderboard", ctx), "cmd:leaderboard");
 
   if (isAdmin) kb.row().text(tr("btn_admin_panel", ctx), "cmd:admin");
 

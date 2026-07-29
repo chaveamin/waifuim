@@ -94,6 +94,8 @@ export async function showMainMenu(ctx: Context) {
   const kb = new InlineKeyboard()
     .text(t("btn_random", lang), "cmd:random")
     .text(t("btn_send_group", lang), "cmd:group")
+    // .row()
+    // .text(tr("animeshots", ctx), "anime_shots:menu")
     .row()
     .text(t("btn_search", lang), "cmd:search")
     .text(t("btn_tags", lang), "cmd:tags")
@@ -107,7 +109,7 @@ export async function showMainMenu(ctx: Context) {
     .text(t("btn_profile", lang), "cmd:profile")
     .text(t("btn_settings", lang), "cmd:settings")
     .row()
-    .text(t("btn_leaderboard", lang), "cmd:leaderboard")
+    // .text(t("btn_leaderboard", lang), "cmd:leaderboard")
     .text(t("btn_help", lang), "cmd:help");
 
   if (isAdmin) kb.row().text(t("btn_admin_panel", lang), "cmd:admin");

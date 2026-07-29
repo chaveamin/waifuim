@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "tsx src/index.ts",
     "build": "node build.mjs",
+    "build:worker": "node extract-anime-pics.mjs && node build-worker.mjs",
     "start": "node dist/bot.mjs"
   },
   "dependencies": {
@@ -19,6 +20,6 @@
     "esbuild": "^0.28.1",
     "tsx": "^4.19.4",
     "typescript": "^5.8.3",
-    "wrangler": "^4.105.0"
+    "wrangler": "^4.111.0"
   }
 }

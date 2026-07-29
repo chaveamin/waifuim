@@ -42,8 +42,8 @@ export function registerHelp(bot: any) {
       .row()
       .text(tr("btn_profile", ctx), "cmd:profile")
       .text(tr("btn_settings", ctx), "cmd:settings")
-      .row()
-      .text(tr("btn_leaderboard", ctx), "cmd:leaderboard");
+      .row();
+    // .text(tr("btn_leaderboard", ctx), "cmd:leaderboard");
 
     if (isAdmin) kb.row().text(tr("btn_admin_panel", ctx), "cmd:admin");
 
