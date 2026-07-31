@@ -286,17 +286,16 @@ async function showPatreonArtistDetail(ctx: Context, artistId: number) {
 
   const artistEntry = files[0];
 
-  // Build caption containing only metadata (no artist name, no file count)
   let caption = "";
-  if (artistEntry.artistDescription) caption += `${artistEntry.artistDescription}\n\n`;
-  if (artistEntry.patreonLink) caption += `Patreon: ${artistEntry.patreonLink}\n`;
+  if (artistEntry.artistDescription)
+    caption += `${artistEntry.artistDescription}\n\n`;
+  if (artistEntry.patreonLink)
+    caption += `Patreon: ${artistEntry.patreonLink}\n`;
   if (artistEntry.genres && artistEntry.genres.length)
     caption += `Genres: ${artistEntry.genres.join(", ")}\n`;
 
-  // Truncate caption to Telegram limit (1024 chars)
   if (caption.length > 1024) caption = caption.slice(0, 1020) + "...";
 
-  // Build keyboard and file buttons
   const kb = new InlineKeyboard();
   for (const [index, file] of files.entries()) {
     const buttonText = file.title
@@ -311,7 +310,6 @@ async function showPatreonArtistDetail(ctx: Context, artistId: number) {
     "cmd:main",
   );
 
-  // Send only the first preview with caption and keyboard (no extra messages)
   try {
     const chatId = ctx.chat?.id ?? ctx.from?.id;
     if (
@@ -322,19 +320,20 @@ async function showPatreonArtistDetail(ctx: Context, artistId: number) {
       const normalize = (url: string) => url.replace(/\.avif(\?.*)?$/i, ".jpg");
       const first = normalize(artistEntry.previewImages[0]);
       await ctx.replyWithPhoto(first, { caption, reply_markup: kb });
-      return; // do not send any other messages
+      return;
     }
   } catch (err) {
     logger.warn("Failed to send preview image:", err);
   }
 
-  // Fallback: if no preview exists or sending failed, send caption text with keyboard as single message
   const fallbackText = caption || tr("patreon_no_files", ctx);
   try {
     await ctx.reply(fallbackText, { reply_markup: kb });
   } catch (err) {
     if (ctx.callbackQuery) {
-      await ctx.editMessageText(fallbackText, { reply_markup: kb }).catch(() => {});
+      await ctx
+        .editMessageText(fallbackText, { reply_markup: kb })
+        .catch(() => {});
     }
   }
 }
