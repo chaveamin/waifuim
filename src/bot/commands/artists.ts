@@ -387,8 +387,7 @@ async function showPatreonArtistDetail(ctx: Context, artistId: number) {
       artistEntry.previewImages.length &&
       chatId
     ) {
-      const normalize = (url: string) => url.replace(/\.avif(\?.*)?$/i, ".jpg");
-      const previews = artistEntry.previewImages.map(normalize);
+      const previews = artistEntry.previewImages.slice();
 
       if (previews.length === 1) {
         await ctx.replyWithPhoto(previews[0], { caption, reply_markup: kb });
