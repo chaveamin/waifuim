@@ -109,6 +109,8 @@ export async function showMainMenu(ctx: Context) {
     .text(t("btn_profile", lang), "cmd:profile")
     .text(t("btn_settings", lang), "cmd:settings")
     .row()
+    .text(t("btn_patreon_artists", lang), "cmd:patreon_artists")
+    .row()
     // .text(t("btn_leaderboard", lang), "cmd:leaderboard")
     .text(t("btn_help", lang), "cmd:help");
 

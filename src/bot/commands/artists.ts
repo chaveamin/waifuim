@@ -11,6 +11,7 @@ import {
 import { logger } from "../../utils/logger.js";
 import { tr } from "../../i18n/index.js";
 import { replyWithMediaUniversal } from "../../utils/imageHelpers.js";
+import { getPatreonArtists, getPatreonFiles } from "../../data/patreonFiles.js";
 
 const searchState = new Map<number, boolean>();
 
@@ -154,6 +155,19 @@ export function registerArtists(bot: any) {
     }
   });
 
+  bot.callbackQuery(/^patreon_artist:(\d+)$/, async (ctx: Context) => {
+    const artistId = parseInt(ctx.match![1]);
+    await ctx.answerCallbackQuery();
+    await showPatreonArtistDetail(ctx, artistId);
+  });
+
+  bot.callbackQuery(/^patreon_file:(\d+):(\d+)$/, async (ctx: Context) => {
+    await ctx.answerCallbackQuery();
+    const artistId = parseInt(ctx.match![1]);
+    const fileIndex = parseInt(ctx.match![2]);
+    await sendPatreonFile(ctx, artistId, fileIndex);
+  });
+
   bot.callbackQuery("artists:search", async (ctx: Context) => {
     await ctx.answerCallbackQuery();
     const userId = ctx.from?.id;
@@ -229,6 +243,115 @@ async function searchArtistByName(ctx: Context, query: string) {
     await ctx.reply(tr("artist_search_faild", ctx), {
       reply_markup: new InlineKeyboard().text(
         `${tr("btn_back_to_menu", ctx)}`,
+        "cmd:main",
+      ),
+    });
+  }
+}
+
+export async function showPatreonArtistsPage(ctx: Context) {
+  const artists = getPatreonArtists();
+  if (!artists.length) {
+    await ctx.reply(tr("patreon_no_files", ctx), {
+      reply_markup: new InlineKeyboard().text(
+        tr("btn_back_to_menu", ctx),
+        "cmd:main",
+      ),
+    });
+    return;
+  }
+
+  let text = `${tr("btn_patreon_artists", ctx)}\n\n`;
+  const kb = new InlineKeyboard();
+
+  for (const artist of artists) {
+    kb.text(`${artist.artistName}`, `patreon_artist:${artist.artistId}`).row();
+  }
+
+  kb.text(tr("btn_back_to_menu", ctx), "cmd:main");
+  await ctx.reply(text, { reply_markup: kb });
+}
+
+async function showPatreonArtistDetail(ctx: Context, artistId: number) {
+  const files = getPatreonFiles(artistId);
+  if (!files.length) {
+    await ctx.reply(tr("patreon_no_files", ctx), {
+      reply_markup: new InlineKeyboard().text(
+        tr("btn_back_to_menu", ctx),
+        "cmd:main",
+      ),
+    });
+    return;
+  }
+
+  const artistName = files[0].artistName;
+  let text = `${artistName}\n\n${files.length} files:\n\n`;
+  const kb = new InlineKeyboard();
+
+  for (const [index, file] of files.entries()) {
+    const buttonText = file.title
+      ? file.title
+      : file.fileName
+        ? `${tr("btn_receive_file", ctx)} ${file.fileName}`
+        : `${tr("btn_receive_file", ctx)} ${index + 1}`;
+    text += `• ${buttonText}\n`;
+    kb.text(buttonText, `patreon_file:${artistId}:${index}`).row();
+  }
+
+  kb.text(tr("artist_back", ctx), "cmd:patreon_artists").text(
+    tr("btn_menu", ctx),
+    "cmd:main",
+  );
+
+  if (ctx.callbackQuery) {
+    await ctx
+      .editMessageText(text, { reply_markup: kb })
+      .catch(() => ctx.reply(text, { reply_markup: kb }));
+  } else {
+    await ctx.reply(text, { reply_markup: kb });
+  }
+}
+
+async function sendPatreonFile(
+  ctx: Context,
+  artistId: number,
+  fileIndex: number,
+) {
+  const files = getPatreonFiles(artistId);
+  const file = files[fileIndex];
+  if (!file) {
+    await ctx.reply(tr("patreon_send_failed", ctx), {
+      reply_markup: new InlineKeyboard().text(
+        tr("btn_back_to_menu", ctx),
+        "cmd:main",
+      ),
+    });
+    return;
+  }
+
+  try {
+    const chatId = ctx.chat?.id ?? ctx.from?.id;
+    if (!chatId) throw new Error("Missing chat id");
+
+    if (file.fileId) {
+      await ctx.replyWithDocument(file.fileId);
+    } else if ((file.channelId || file.channelUsername) && file.messageId) {
+      // Prefer numeric channelId for private channels; fall back to channelUsername for public channels
+      const sourceChat = (file.channelId ?? file.channelUsername) as string;
+      await ctx.api.copyMessage(chatId, sourceChat, file.messageId);
+    } else {
+      throw new Error("No file source configured");
+    }
+
+    await ctx.answerCallbackQuery({
+      text: tr("patreon_file_sent", ctx),
+      show_alert: false,
+    });
+  } catch (err) {
+    logger.error("Patreon file send error:", err);
+    await ctx.reply(tr("patreon_send_failed", ctx), {
+      reply_markup: new InlineKeyboard().text(
+        tr("btn_back_to_menu", ctx),
         "cmd:main",
       ),
     });

@@ -18,7 +18,10 @@ import {
 import { logger } from "../../utils/logger.js";
 import { tr, t, getLang } from "../../i18n/index.js";
 import { showMainMenu } from "../commands/start.js";
-import { showArtistsPage } from "../commands/artists.js";
+import {
+  showArtistsPage,
+  showPatreonArtistsPage,
+} from "../commands/artists.js";
 import { replyWithMediaUniversal } from "../../utils/imageHelpers.js";
 import { handleAnimeShotsCallback } from "../commands/animeShots.js";
 
@@ -50,6 +53,9 @@ export function registerCallbackHandlers(bot: any) {
           break;
         case "artists":
           await handleArtists(ctx);
+          break;
+        case "patreon_artists":
+          await showPatreonArtistsPage(ctx);
           break;
         case "stats":
           await handleStats(ctx);

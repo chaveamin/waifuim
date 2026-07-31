@@ -26,7 +26,12 @@ app.get("/setup", async (c) => {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       url: webhookUrl,
-      allowed_updates: ["message", "callback_query", "inline_query"],
+      allowed_updates: [
+        "message",
+        "callback_query",
+        "inline_query",
+        "channel_post",
+      ],
     }),
   });
 
@@ -154,6 +159,33 @@ app.all("/webhook", async (c) => {
   const { registerAdminStats } = await import("../bot/admin/statistics.js");
 
   bot.use(authMiddleware);
+
+  bot.on("channel_post", async (ctx) => {
+    const channelPost = ctx.channelPost;
+    if (!channelPost) return;
+
+    const chat = ctx.chat;
+    const chatId = chat?.id;
+    const messageId = channelPost.message_id;
+    const fileName = channelPost.document?.file_name;
+    const textPreview = channelPost.text?.slice(0, 120);
+    const adminId = Number(env.ADMIN_TELEGRAM_ID || 0);
+
+    const message =
+      `Channel post received:\n` +
+      `chat_id=${chatId}\n` +
+      `message_id=${messageId}\n` +
+      `${fileName ? `document=${fileName}\n` : ""}` +
+      `${textPreview ? `text=${textPreview}\n` : ""}`;
+
+    if (adminId) {
+      try {
+        await bot.api.sendMessage(adminId, message);
+      } catch (err) {
+        console.error("Failed to notify admin about channel post:", err);
+      }
+    }
+  });
 
   registerStart(bot);
   registerHelp(bot);

@@ -122,7 +122,24 @@ export const messages: Record<string, Record<Lang, string>> = {
   btn_search_artist: { en: "🔍 Search Artist", fa: "🔍 جستجوی آرتیست" },
   btn_search_artist_again: { en: "🔍 Search Again", fa: "🔍 جستجوی دوباره" },
   btn_all_artists: { en: "🎨 All Artists", fa: "🎨 همه آرتیست‌ها" },
-  btn_fav: { en: "❤️ Favorite", fa: "❤️ افزودن به علاقه‌مندی" },
+  btn_patreon_artists: {
+    en: "💎 Patreon Artists",
+    fa: "💎 آرتیست‌های Patreon",
+  },
+  btn_receive_file: { en: "📁 Receive File", fa: "📁 دریافت فایل" },
+  patreon_artists_total: { en: "artists", fa: "آرتیست" },
+  patreon_no_files: {
+    en: "No Patreon files are configured.",
+    fa: "هیچ فایل Patreon تنظیم نشده است.",
+  },
+  patreon_file_sent: {
+    en: "The file has been sent to you.",
+    fa: "فایل برای شما ارسال شد.",
+  },
+  patreon_send_failed: {
+    en: "Failed to send Patreon file.",
+    fa: "ارسال فایل Patreon ناموفق بود.",
+  },
   btn_unfav: { en: "💔 Unfavorite", fa: "💔 حذف از علاقه‌مندی" },
   btn_albums_pick: { en: "📚 Add to Album", fa: "📚 افزودن به آلبوم" },
   btn_create_album: { en: "➕ Create Album", fa: "➕ ساخت آلبوم" },

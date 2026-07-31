@@ -11,7 +11,10 @@ import { tr } from "../../i18n/index.js";
 
 export async function authMiddleware(ctx: Context, next: NextFunction) {
   const user = ctx.from;
-  if (!user) return;
+  if (!user) {
+    await next();
+    return;
+  }
 
   await upsertUser(
     user.id,
