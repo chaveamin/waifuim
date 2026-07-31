@@ -290,7 +290,7 @@ async function showPatreonArtistDetail(ctx: Context, artistId: number) {
   if (artistEntry.artistDescription)
     caption += `${artistEntry.artistDescription}\n\n`;
   if (artistEntry.patreonLink)
-    caption += `Patreon: ${artistEntry.patreonLink}\n`;
+    caption += `[Patreon](${artistEntry.patreonLink})\n`;
   if (artistEntry.genres && artistEntry.genres.length)
     caption += `Genres: ${artistEntry.genres.join(", ")}\n`;
 
@@ -362,7 +362,6 @@ async function sendPatreonFile(
     if (file.fileId) {
       await ctx.replyWithDocument(file.fileId);
     } else if ((file.channelId || file.channelUsername) && file.messageId) {
-      // Prefer numeric channelId for private channels; fall back to channelUsername for public channels
       const sourceChat = (file.channelId ?? file.channelUsername) as string;
       await ctx.api.copyMessage(chatId, sourceChat, file.messageId);
     } else {
