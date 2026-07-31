@@ -7,6 +7,10 @@ export type PatreonFile = {
   fileId?: string;
   title?: string;
   fileName?: string;
+  artistDescription?: string;
+  patreonLink?: string;
+  genres?: string[];
+  previewImages?: string[];
 };
 
 export const PATREON_FILES: PatreonFile[] = [
@@ -17,6 +21,19 @@ export const PATREON_FILES: PatreonFile[] = [
     messageId: 6,
     title: "Limart Collection",
     fileName: "Limart_Collection.zip",
+    artistDescription:
+      "Limart is a 2D artist who makes pinups/art of characters from various franchises.",
+    patreonLink: "https://www.patreon.com/LIMART",
+    genres: ["2dcg", "parody", "lesbian"],
+    previewImages: [
+      "https://res.cloudinary.com/dtt91yavh/image/upload/v1785471161/waifuim%20patreon%20files%20image%20preview/limart_2.avif",
+      "https://res.cloudinary.com/dtt91yavh/image/upload/v1785471161/waifuim%20patreon%20files%20image%20preview/limart_7.avif",
+      "https://res.cloudinary.com/dtt91yavh/image/upload/v1785471161/waifuim%20patreon%20files%20image%20preview/limart_6.avif",
+      "https://res.cloudinary.com/dtt91yavh/image/upload/v1785471160/waifuim%20patreon%20files%20image%20preview/limart_3.avif",
+      "https://res.cloudinary.com/dtt91yavh/image/upload/v1785471160/waifuim%20patreon%20files%20image%20preview/limart_5.avif",
+      "https://res.cloudinary.com/dtt91yavh/image/upload/v1785471160/waifuim%20patreon%20files%20image%20preview/limart_4.avif",
+      "https://res.cloudinary.com/dtt91yavh/image/upload/v1785471159/waifuim%20patreon%20files%20image%20preview/limart_1.avif",
+    ],
   },
 ];
 

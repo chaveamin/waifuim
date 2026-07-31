@@ -284,31 +284,58 @@ async function showPatreonArtistDetail(ctx: Context, artistId: number) {
     return;
   }
 
-  const artistName = files[0].artistName;
-  let text = `${artistName}\n\n${files.length} files:\n\n`;
-  const kb = new InlineKeyboard();
+  const artistEntry = files[0];
 
+  // Build caption containing only metadata (no artist name, no file count)
+  let caption = "";
+  if (artistEntry.artistDescription) caption += `${artistEntry.artistDescription}\n\n`;
+  if (artistEntry.patreonLink) caption += `Patreon: ${artistEntry.patreonLink}\n`;
+  if (artistEntry.genres && artistEntry.genres.length)
+    caption += `Genres: ${artistEntry.genres.join(", ")}\n`;
+
+  // Truncate caption to Telegram limit (1024 chars)
+  if (caption.length > 1024) caption = caption.slice(0, 1020) + "...";
+
+  // Build keyboard and file buttons
+  const kb = new InlineKeyboard();
   for (const [index, file] of files.entries()) {
     const buttonText = file.title
       ? file.title
       : file.fileName
         ? `${tr("btn_receive_file", ctx)} ${file.fileName}`
         : `${tr("btn_receive_file", ctx)} ${index + 1}`;
-    text += `• ${buttonText}\n`;
     kb.text(buttonText, `patreon_file:${artistId}:${index}`).row();
   }
-
   kb.text(tr("artist_back", ctx), "cmd:patreon_artists").text(
     tr("btn_menu", ctx),
     "cmd:main",
   );
 
-  if (ctx.callbackQuery) {
-    await ctx
-      .editMessageText(text, { reply_markup: kb })
-      .catch(() => ctx.reply(text, { reply_markup: kb }));
-  } else {
-    await ctx.reply(text, { reply_markup: kb });
+  // Send only the first preview with caption and keyboard (no extra messages)
+  try {
+    const chatId = ctx.chat?.id ?? ctx.from?.id;
+    if (
+      artistEntry.previewImages &&
+      artistEntry.previewImages.length &&
+      chatId
+    ) {
+      const normalize = (url: string) => url.replace(/\.avif(\?.*)?$/i, ".jpg");
+      const first = normalize(artistEntry.previewImages[0]);
+      await ctx.replyWithPhoto(first, { caption, reply_markup: kb });
+      return; // do not send any other messages
+    }
+  } catch (err) {
+    logger.warn("Failed to send preview image:", err);
+  }
+
+  // Fallback: if no preview exists or sending failed, send caption text with keyboard as single message
+  const fallbackText = caption || tr("patreon_no_files", ctx);
+  try {
+    await ctx.reply(fallbackText, { reply_markup: kb });
+  } catch (err) {
+    if (ctx.callbackQuery) {
+      await ctx.editMessageText(fallbackText, { reply_markup: kb }).catch(() => {});
+    }
   }
 }
 
