@@ -127,6 +127,7 @@ export const messages: Record<string, Record<Lang, string>> = {
     fa: "💎 آرتیست‌های Patreon",
   },
   btn_receive_file: { en: "📁 Receive File", fa: "📁 دریافت فایل" },
+  btn_request_artist: { en: "➕ Request Artist", fa: "➕ درخواست آرتیست" },
   patreon_artists_total: { en: "artists", fa: "آرتیست" },
   patreon_no_files: {
     en: "No Patreon files are configured.",
@@ -139,6 +140,18 @@ export const messages: Record<string, Record<Lang, string>> = {
   patreon_send_failed: {
     en: "Failed to send Patreon file.",
     fa: "ارسال فایل Patreon ناموفق بود.",
+  },
+  request_artist_prompt: {
+    en: "Send the artist name",
+    fa: "نام آرتیست مورد نظر خودتون رو بفرستید. سعی میکنم حداکثر تا یه هفته بزارمش",
+  },
+  request_artist_sent: {
+    en: "Your request has been sent to the admin",
+    fa: "درخواست شما به مدیر ارسال شد",
+  },
+  request_artist_failed: {
+    en: "Failed to send your request. Please try again.",
+    fa: "درخواست شما ارسال نشد. دوباره تلاش کنید.",
   },
   btn_unfav: { en: "💔 Unfavorite", fa: "💔 حذف از علاقه‌مندی" },
   btn_albums_pick: { en: "📚 Add to Album", fa: "📚 افزودن به آلبوم" },

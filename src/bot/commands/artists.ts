@@ -12,8 +12,10 @@ import { logger } from "../../utils/logger.js";
 import { tr } from "../../i18n/index.js";
 import { replyWithMediaUniversal } from "../../utils/imageHelpers.js";
 import { getPatreonArtists, getPatreonFiles } from "../../data/patreonFiles.js";
+import { config } from "../../config.js";
 
 const searchState = new Map<number, boolean>();
+const requestArtistState = new Map<number, boolean>();
 
 export function registerArtists(bot: any) {
   bot.command("artists", async (ctx: Context) => {
@@ -183,9 +185,29 @@ export function registerArtists(bot: any) {
     await searchArtistByName(ctx, name);
   });
 
+  bot.callbackQuery("patreon:request_artist", async (ctx: Context) => {
+    await ctx.answerCallbackQuery();
+    const userId = ctx.from?.id;
+    if (!userId) return;
+    requestArtistState.set(userId, true);
+    const kb = new InlineKeyboard().text(
+      tr("btn_cancel", ctx),
+      "cmd:patreon_artists",
+    );
+    await ctx.reply(tr("request_artist_prompt", ctx), { reply_markup: kb });
+  });
+
   bot.on("message:text", async (ctx: Context, next: () => void) => {
     const userId = ctx.from?.id;
     if (!userId || !ctx.message?.text) return next();
+
+    if (requestArtistState.get(userId)) {
+      requestArtistState.delete(userId);
+      const text = ctx.message.text;
+      if (text.startsWith("/")) return next();
+      await handleArtistRequest(ctx, text);
+      return;
+    }
 
     if (searchState.get(userId)) {
       searchState.delete(userId);
@@ -196,6 +218,52 @@ export function registerArtists(bot: any) {
     }
     return next();
   });
+}
+
+async function handleArtistRequest(ctx: Context, message: string) {
+  const userId = ctx.from?.id;
+  const username = ctx.from?.username || `User${userId}`;
+  const firstName = ctx.from?.first_name || "";
+  const lastName = ctx.from?.last_name || "";
+  const userDisplayName =
+    firstName || lastName ? `${firstName} ${lastName}`.trim() : username;
+
+  try {
+    if (!config.adminTelegramId) {
+      await ctx.reply(tr("request_artist_failed", ctx), {
+        reply_markup: new InlineKeyboard().text(
+          tr("btn_back_to_menu", ctx),
+          "cmd:main",
+        ),
+      });
+      logger.warn("Admin Telegram ID not configured");
+      return;
+    }
+
+    const adminMessage =
+      `**درخواست**\n\n` +
+      `از طرف: ${userDisplayName} (@${username})\n` +
+      `پیام:\n${message}`;
+
+    await ctx.api.sendMessage(config.adminTelegramId, adminMessage, {
+      parse_mode: "Markdown",
+    });
+
+    await ctx.reply(tr("request_artist_sent", ctx), {
+      reply_markup: new InlineKeyboard().text(
+        tr("btn_back_to_menu", ctx),
+        "cmd:main",
+      ),
+    });
+  } catch (err) {
+    logger.error("Failed to send artist request:", err);
+    await ctx.reply(tr("request_artist_failed", ctx), {
+      reply_markup: new InlineKeyboard().text(
+        tr("btn_back_to_menu", ctx),
+        "cmd:main",
+      ),
+    });
+  }
 }
 
 async function searchArtistByName(ctx: Context, query: string) {
@@ -263,6 +331,8 @@ export async function showPatreonArtistsPage(ctx: Context) {
 
   let text = `${tr("btn_patreon_artists", ctx)}\n\n`;
   const kb = new InlineKeyboard();
+
+  kb.text(tr("btn_request_artist", ctx), "patreon:request_artist").row();
 
   for (const artist of artists) {
     kb.text(`${artist.artistName}`, `patreon_artist:${artist.artistId}`).row();
