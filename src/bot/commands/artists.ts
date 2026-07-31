@@ -388,8 +388,26 @@ async function showPatreonArtistDetail(ctx: Context, artistId: number) {
       chatId
     ) {
       const normalize = (url: string) => url.replace(/\.avif(\?.*)?$/i, ".jpg");
-      const first = normalize(artistEntry.previewImages[0]);
-      await ctx.replyWithPhoto(first, { caption, reply_markup: kb });
+      const previews = artistEntry.previewImages.map(normalize);
+
+      if (previews.length === 1) {
+        await ctx.replyWithPhoto(previews[0], { caption, reply_markup: kb });
+        return;
+      }
+
+      const chunkSize = 10;
+      for (let i = 0; i < previews.length; i += chunkSize) {
+        const chunk = previews.slice(i, i + chunkSize);
+        const media = chunk.map((url, index) => ({
+          type: "photo" as const,
+          media: url,
+          ...(i === 0 && index === 0
+            ? { caption, parse_mode: "Markdown" as const }
+            : {}),
+        }));
+        await ctx.replyWithMediaGroup(media);
+      }
+      await ctx.reply(artistEntry.artistName, { reply_markup: kb });
       return;
     }
   } catch (err) {

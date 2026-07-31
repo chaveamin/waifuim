@@ -512,24 +512,4 @@ export const messages: Record<string, Record<Lang, string>> = {
     en: "Good Morning! Here's your daily waifu",
     fa: "صبح عالی بخیر! این هم از وایفوی روزانه شما.",
   },
-  animeshots: {
-    en: "Anime Shots",
-    fa: "شات‌های انیمه",
-  },
-  animeshots_normal: {
-    en: "Normal",
-    fa: "معمولی",
-  },
-  animeshots_uncensored: {
-    en: "Uncensored",
-    fa: "لختی",
-  },
-  animeshots_notfound: {
-    en: "anime shots found.",
-    fa: "عکس یافت نشد.",
-  },
-  animeshots_choose: {
-    en: "Choose:",
-    fa: "انتخاب کنید:",
-  },
 };

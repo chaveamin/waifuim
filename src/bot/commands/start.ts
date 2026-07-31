@@ -94,8 +94,6 @@ export async function showMainMenu(ctx: Context) {
   const kb = new InlineKeyboard()
     .text(t("btn_random", lang), "cmd:random")
     .text(t("btn_send_group", lang), "cmd:group")
-    // .row()
-    // .text(tr("animeshots", ctx), "anime_shots:menu")
     .row()
     .text(t("btn_search", lang), "cmd:search")
     .text(t("btn_tags", lang), "cmd:tags")

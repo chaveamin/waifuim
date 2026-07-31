@@ -23,20 +23,8 @@ import {
   showPatreonArtistsPage,
 } from "../commands/artists.js";
 import { replyWithMediaUniversal } from "../../utils/imageHelpers.js";
-import { handleAnimeShotsCallback } from "../commands/animeShots.js";
 
 export function registerCallbackHandlers(bot: any) {
-  bot.callbackQuery(/^anime_shots/, async (ctx: Context) => {
-    const data = ctx.callbackQuery?.data;
-    if (!data) return;
-    try {
-      await ctx.answerCallbackQuery();
-      await handleAnimeShotsCallback(ctx, data);
-    } catch (err: any) {
-      logger.error("anime_shots callback error:", err);
-    }
-  });
-
   bot.callbackQuery(/^cmd:(.+)$/, async (ctx: Context) => {
     const cmd = ctx.match![1];
     try {
