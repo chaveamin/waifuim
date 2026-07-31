@@ -126,7 +126,7 @@ export const messages: Record<string, Record<Lang, string>> = {
     en: "💎 Patreon Artists",
     fa: "💎 آرتیست‌های Patreon",
   },
-  btn_receive_file: { en: "📁 Receive File", fa: "📁 دریافت فایل" },
+  btn_receive_file: { en: "Receive File", fa: "دریافت فایل" },
   btn_request_artist: { en: "➕ Request Artist", fa: "➕ درخواست آرتیست" },
   patreon_artists_total: { en: "artists", fa: "آرتیست" },
   patreon_no_files: {

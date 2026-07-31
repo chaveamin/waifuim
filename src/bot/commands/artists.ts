@@ -1,4 +1,4 @@
-import { Context } from "grammy";
+import { Context, InputFile } from "grammy";
 import { InlineKeyboard } from "grammy";
 import { getArtists, searchImages } from "../../api/waifu.js";
 import { getUser, isFavorited } from "../../db/queries.js";
@@ -13,6 +13,13 @@ import { tr } from "../../i18n/index.js";
 import { replyWithMediaUniversal } from "../../utils/imageHelpers.js";
 import { getPatreonArtists, getPatreonFiles } from "../../data/patreonFiles.js";
 import { config } from "../../config.js";
+
+async function fetchAsInputFile(url: string) {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`Failed to fetch ${url}: ${res.status}`);
+  const buf = Buffer.from(await res.arrayBuffer());
+  return new InputFile(buf);
+}
 
 const searchState = new Map<number, boolean>();
 const requestArtistState = new Map<number, boolean>();
@@ -367,12 +374,8 @@ async function showPatreonArtistDetail(ctx: Context, artistId: number) {
   if (caption.length > 1024) caption = caption.slice(0, 1020) + "...";
 
   const kb = new InlineKeyboard();
-  for (const [index, file] of files.entries()) {
-    const buttonText = file.title
-      ? file.title
-      : file.fileName
-        ? `${tr("btn_receive_file", ctx)} ${file.fileName}`
-        : `${tr("btn_receive_file", ctx)} ${index + 1}`;
+  for (const [index] of files.entries()) {
+    const buttonText = tr("btn_receive_file", ctx);
     kb.text(buttonText, `patreon_file:${artistId}:${index}`).row();
   }
   kb.text(tr("artist_back", ctx), "cmd:patreon_artists").text(
@@ -390,20 +393,27 @@ async function showPatreonArtistDetail(ctx: Context, artistId: number) {
       const previews = artistEntry.previewImages.slice();
 
       if (previews.length === 1) {
-        await ctx.replyWithPhoto(previews[0], { caption, reply_markup: kb });
+        const photo = await fetchAsInputFile(previews[0]);
+        await ctx.replyWithPhoto(photo, {
+          caption,
+          reply_markup: kb,
+          parse_mode: "Markdown",
+        });
         return;
       }
 
       const chunkSize = 10;
       for (let i = 0; i < previews.length; i += chunkSize) {
         const chunk = previews.slice(i, i + chunkSize);
-        const media = chunk.map((url, index) => ({
-          type: "photo" as const,
-          media: url,
-          ...(i === 0 && index === 0
-            ? { caption, parse_mode: "Markdown" as const }
-            : {}),
-        }));
+        const media = await Promise.all(
+          chunk.map(async (url, index) => ({
+            type: "photo" as const,
+            media: await fetchAsInputFile(url),
+            ...(i === 0 && index === 0
+              ? { caption, parse_mode: "Markdown" as const }
+              : {}),
+          })),
+        );
         await ctx.replyWithMediaGroup(media);
       }
       await ctx.reply(artistEntry.artistName, { reply_markup: kb });
@@ -411,6 +421,7 @@ async function showPatreonArtistDetail(ctx: Context, artistId: number) {
     }
   } catch (err) {
     logger.warn("Failed to send preview image:", err);
+    console.error("PATREON PREVIEW ERROR:", err);
   }
 
   const fallbackText = caption || tr("patreon_no_files", ctx);
