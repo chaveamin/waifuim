@@ -578,11 +578,11 @@ async function handleAlbums(ctx: Context) {
   }
 
   let text = `${tr("albums_title", ctx)} (${albums.length})\n\n`;
-  for (const a of albums) text += `📁 ${a.name} — ${a.image_count}\n`;
+  for (const a of albums) text += `${a.name} -- ${a.image_count}\n`;
 
   const kb = new InlineKeyboard();
   for (const a of albums)
-    kb.text(`📁 ${a.name} (${a.image_count})`, `album_view:${a.id}`).row();
+    kb.text(`${a.name} (${a.image_count})`, `album_view:${a.id}`).row();
   kb.text(tr("btn_create_album", ctx), "albums:create").row();
   kb.text(tr("btn_back_to_menu", ctx), "cmd:main");
 

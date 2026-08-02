@@ -280,7 +280,7 @@ export function registerAlbums(bot: any) {
 
     const kb = new InlineKeyboard();
     for (const a of albums) {
-      const prefix = a.id === albumId ? "✅" : "📁";
+      const prefix = a.id === albumId ? "✅" : "";
       kb.text(
         `${prefix} ${a.name} (${a.image_count})`,
         `album_quickadd:${a.id}:${imageId}`,

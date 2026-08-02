@@ -104,7 +104,7 @@ export const messages: Record<string, Record<Lang, string>> = {
   btn_search: { en: "🔍 Search", fa: "🔍 جستجو" },
   btn_tags: { en: "🏷️ Tags", fa: "🏷️ تگ‌ها" },
   btn_artists: { en: "🎨 Artists", fa: "🎨 آرتیست‌ها" },
-  btn_favorites: { en: "❤️ Favorites", fa: "❤️ علاقه‌مندی‌ها" },
+  btn_fav: { en: "❤️ Favorites", fa: "❤️ علاقه‌مندی‌ها" },
   btn_albums: { en: "📚 Albums", fa: "📚 آلبوم‌ها" },
   btn_daily: { en: "📅 Daily", fa: "📅 روزانه" },
   btn_profile: { en: "👤 Profile", fa: "👤 پروفایل" },
