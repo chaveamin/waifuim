@@ -34,6 +34,38 @@ export const PATREON_FILES: PatreonFile[] = [
       "https://i.ibb.co/ZRqgWFfj/limart-7.jpg",
     ],
   },
+  {
+    artistId: 2,
+    artistName: "Feguimel",
+    channelId: "-1004307035003",
+    messageId: 10,
+    title: "Feguimel Collection",
+    fileName: "Feguimel_Collection.zip",
+    artistDescription:
+      "Briefly, He just loves drawing female characters, around all sort of themes... Little risque, sexy stuff, is his forte.​",
+    patreonLink: "https://www.patreon.com/feguimel",
+    genres: [
+      "anal",
+      "sex",
+      "big tits",
+      "fantasy",
+      "lesbian",
+      "masturbation",
+      "monster girl",
+      "sex toys",
+    ],
+    previewImages: [
+      "https://i.ibb.co/GfbgL0Yf/feguimel-1.avif",
+      "https://i.ibb.co/wr7RbH7X/feguimel-2.avif",
+      "https://i.ibb.co/TMr3Dp6B/feguimel-3.avif",
+      "https://i.ibb.co/tTy6R40h/feguimel-4.avif",
+      "https://i.ibb.co/WWzs95V2/feguimel-5.avif",
+      "https://i.ibb.co/xqc4Y4pX/feguimel-6.avif",
+      "https://i.ibb.co/vxVyr3sm/feguimel-7.avif",
+      "https://i.ibb.co/cSvQ18LV/feguimel-8.avif",
+      "https://i.ibb.co/fVNbrTQQ/feguimel-9.avif",
+    ],
+  },
 ];
 
 export function getPatreonArtists() {
