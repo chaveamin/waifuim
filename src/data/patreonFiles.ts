@@ -27,7 +27,6 @@ export const PATREON_FILES: PatreonFile[] = [
     genres: ["2dcg", "parody", "lesbian"],
     previewImages: [
       "https://i.ibb.co/sdn3TGvH/limart-1.jpg",
-      "https://i.ibb.co/wZskTgtq/limart-2.jpg",
       "https://i.ibb.co/KckxTF11/limart-3.jpg",
       "https://i.ibb.co/MXLPC14/limart-4.jpg",
       "https://i.ibb.co/PZ7wb4PN/limart-5.jpg",

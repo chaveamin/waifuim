@@ -17,8 +17,8 @@ import { config } from "../../config.js";
 async function fetchAsInputFile(url: string) {
   const res = await fetch(url);
   if (!res.ok) throw new Error(`Failed to fetch ${url}: ${res.status}`);
-  const buf = Buffer.from(await res.arrayBuffer());
-  return new InputFile(buf);
+  const bytes = new Uint8Array(await res.arrayBuffer());
+  return new InputFile(bytes);
 }
 
 const searchState = new Map<number, boolean>();
@@ -367,7 +367,7 @@ async function showPatreonArtistDetail(ctx: Context, artistId: number) {
   if (artistEntry.artistDescription)
     caption += `${artistEntry.artistDescription}\n\n`;
   if (artistEntry.patreonLink)
-    caption += `[Patreon](${artistEntry.patreonLink})\n`;
+    caption += `[Patreon page](${artistEntry.patreonLink})\n`;
   if (artistEntry.genres && artistEntry.genres.length)
     caption += `Genres: ${artistEntry.genres.join(", ")}\n`;
 
@@ -393,8 +393,7 @@ async function showPatreonArtistDetail(ctx: Context, artistId: number) {
       const previews = artistEntry.previewImages.slice();
 
       if (previews.length === 1) {
-        const photo = await fetchAsInputFile(previews[0]);
-        await ctx.replyWithPhoto(photo, {
+        await ctx.replyWithPhoto(previews[0], {
           caption,
           reply_markup: kb,
           parse_mode: "Markdown",
@@ -409,7 +408,7 @@ async function showPatreonArtistDetail(ctx: Context, artistId: number) {
         const media = await Promise.all(
           chunk.map(async (url, index) => ({
             type: "photo" as const,
-            media: await fetchAsInputFile(url),
+            media: url,
             ...(i === 0 && index === 0
               ? { caption, parse_mode: "Markdown" as const }
               : {}),
