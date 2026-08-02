@@ -21,21 +21,6 @@ bot.on("channel_post", async (ctx) => {
   logger.info(
     `Channel post received: ${channelName} (${chatId}) message_id=${messageId} ${description}`,
   );
-
-  if (config.adminTelegramId) {
-    try {
-      await bot.api.sendMessage(
-        config.adminTelegramId,
-        `Channel post seen:\n` +
-          `channel=${channelName}\n` +
-          `chat_id=${chatId}\n` +
-          `message_id=${messageId}\n` +
-          `${description}`,
-      );
-    } catch (err) {
-      logger.error("Failed to notify admin about channel post:", err);
-    }
-  }
 });
 
 bot.catch((err) => {
