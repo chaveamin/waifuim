@@ -414,6 +414,17 @@ async function showPatreonArtistDetail(ctx: Context, artistId: number) {
               : {}),
           })),
         );
+        // for (const url of previews) {
+        //   console.log("Testing:", url);
+
+        //   try {
+        //     await ctx.replyWithPhoto(url);
+        //     console.log("✅ OK");
+        //   } catch (err) {
+        //     console.error("❌ FAILED:", url, err);
+        //   }
+        // }
+
         const sent = await ctx.replyWithMediaGroup(media);
         if (i === 0 && Array.isArray(sent) && sent.length > 0) {
           firstMessageId = sent[0].message_id;
