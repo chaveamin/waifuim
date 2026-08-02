@@ -403,6 +403,7 @@ async function showPatreonArtistDetail(ctx: Context, artistId: number) {
       }
 
       const chunkSize = 10;
+      let firstMessageId: number | undefined;
       for (let i = 0; i < previews.length; i += chunkSize) {
         const chunk = previews.slice(i, i + chunkSize);
         const media = await Promise.all(
@@ -414,9 +415,28 @@ async function showPatreonArtistDetail(ctx: Context, artistId: number) {
               : {}),
           })),
         );
-        await ctx.replyWithMediaGroup(media);
+        const sent = await ctx.replyWithMediaGroup(media);
+        if (i === 0 && Array.isArray(sent) && sent.length > 0) {
+          firstMessageId = sent[0].message_id;
+        }
       }
-      await ctx.reply(artistEntry.artistName, { reply_markup: kb });
+
+      if (firstMessageId && chatId) {
+        try {
+          await ctx.api.editMessageReplyMarkup(chatId, firstMessageId, {
+            reply_markup: kb,
+          });
+        } catch (err) {
+          logger.warn(
+            "Failed to attach keyboard to media group first message:",
+            err,
+          );
+          await ctx.reply(artistEntry.artistName, { reply_markup: kb });
+        }
+      } else {
+        await ctx.reply(artistEntry.artistName, { reply_markup: kb });
+      }
+
       return;
     }
   } catch (err) {
