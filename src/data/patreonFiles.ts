@@ -2,7 +2,6 @@ export type PatreonFile = {
   artistId: number;
   artistName: string;
   channelUsername?: string;
-  channelId?: string;
   messageId?: number;
   fileId?: string;
   title?: string;
@@ -11,6 +10,7 @@ export type PatreonFile = {
   patreonLink?: string;
   genres?: string[];
   previewImages?: string[];
+  channelId?: string;
 };
 
 export const PATREON_FILES: PatreonFile[] = [

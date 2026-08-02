@@ -481,8 +481,8 @@ async function sendPatreonFile(
 
     if (file.fileId) {
       await ctx.replyWithDocument(file.fileId);
-    } else if ((file.channelId || file.channelUsername) && file.messageId) {
-      const sourceChat = (file.channelId ?? file.channelUsername) as string;
+    } else if (file.channelId && file.messageId) {
+      const sourceChat = file.channelId as string;
       await ctx.api.copyMessage(chatId, sourceChat, file.messageId);
     } else {
       throw new Error("No file source configured");
