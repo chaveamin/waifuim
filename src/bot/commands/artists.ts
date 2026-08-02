@@ -426,11 +426,14 @@ async function showPatreonArtistDetail(ctx: Context, artistId: number) {
 
   const fallbackText = caption || tr("patreon_no_files", ctx);
   try {
-    await ctx.reply(fallbackText, { reply_markup: kb });
+    await ctx.reply(fallbackText, { reply_markup: kb, parse_mode: "Markdown" });
   } catch (err) {
     if (ctx.callbackQuery) {
       await ctx
-        .editMessageText(fallbackText, { reply_markup: kb })
+        .editMessageText(fallbackText, {
+          reply_markup: kb,
+          parse_mode: "Markdown",
+        })
         .catch(() => {});
     }
   }
