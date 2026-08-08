@@ -2,30 +2,135 @@ import { Context, NextFunction } from "grammy";
 import { InlineKeyboard } from "grammy";
 import { getAllNonBannedUsers, logBroadcast } from "../../db/queries.js";
 
-const broadcastState = new Map<number, { step: "waiting"; preview: string }>();
+type BroadcastPreview =
+  | { type: "text"; text: string }
+  | {
+      type: "photo" | "video" | "document" | "animation" | "audio" | "voice";
+      file_id: string;
+      caption?: string;
+    };
+
+const broadcastState = new Map<
+  number,
+  { step: "waiting"; preview?: BroadcastPreview }
+>();
 
 export function registerAdminBroadcast(bot: any) {
-  bot.on("message:text", async (ctx: Context, next: NextFunction) => {
+  bot.on("message", async (ctx: Context, next: NextFunction) => {
     const userId = ctx.from?.id;
     if (!userId) return next();
 
     const state = broadcastState.get(userId);
+    if (!state || state.step !== "waiting") return next();
 
-    if (state && state.step === "waiting") {
-      const text = ctx.message?.text;
+    const msg = ctx.message as any;
 
-      if (!text || text.startsWith("/")) return next();
+    if (msg.text && msg.text.startsWith("/")) return next();
 
-      state.preview = text;
-
+    if (msg.text) {
+      state.preview = { type: "text", text: msg.text };
       const kb = new InlineKeyboard()
         .text("✅ Send Broadcast", "broadcast:confirm")
         .text("❌ Cancel", "broadcast:cancel");
 
       await ctx.reply(
-        `<b>Broadcast Preview:</b>\n\n${text}\n\n<i>Send this to all users?</i>`,
-        { parse_mode: "HTML", reply_markup: kb },
+        `<b>Broadcast Preview:</b>\n\n${msg.text}\n\n<i>Send this to all users?</i>`,
+        {
+          parse_mode: "HTML",
+          reply_markup: kb,
+        },
       );
+      return;
+    }
+
+    if (msg.photo && msg.photo.length) {
+      const fileId = msg.photo[msg.photo.length - 1].file_id;
+      state.preview = { type: "photo", file_id: fileId, caption: msg.caption };
+      const kb = new InlineKeyboard()
+        .text("✅ Send Broadcast", "broadcast:confirm")
+        .text("❌ Cancel", "broadcast:cancel");
+      await ctx.replyWithPhoto(fileId, {
+        caption: msg.caption ?? "",
+        parse_mode: "HTML",
+        reply_markup: kb as any,
+      });
+      return;
+    }
+
+    if (msg.video) {
+      state.preview = {
+        type: "video",
+        file_id: msg.video.file_id,
+        caption: msg.caption,
+      };
+      const kb = new InlineKeyboard()
+        .text("✅ Send Broadcast", "broadcast:confirm")
+        .text("❌ Cancel", "broadcast:cancel");
+      await ctx.replyWithVideo(msg.video.file_id, {
+        caption: msg.caption ?? "",
+        parse_mode: "HTML",
+        reply_markup: kb as any,
+      });
+      return;
+    }
+
+    if (msg.document) {
+      state.preview = {
+        type: "document",
+        file_id: msg.document.file_id,
+        caption: msg.caption,
+      };
+      const kb = new InlineKeyboard()
+        .text("✅ Send Broadcast", "broadcast:confirm")
+        .text("❌ Cancel", "broadcast:cancel");
+      await ctx.replyWithDocument(msg.document.file_id, {
+        caption: msg.caption ?? "",
+        parse_mode: "HTML",
+        reply_markup: kb as any,
+      });
+      return;
+    }
+
+    if (msg.animation) {
+      state.preview = {
+        type: "animation",
+        file_id: msg.animation.file_id,
+        caption: msg.caption,
+      };
+      const kb = new InlineKeyboard()
+        .text("✅ Send Broadcast", "broadcast:confirm")
+        .text("❌ Cancel", "broadcast:cancel");
+      await ctx.replyWithAnimation(msg.animation.file_id, {
+        caption: msg.caption ?? "",
+        parse_mode: "HTML",
+        reply_markup: kb as any,
+      });
+      return;
+    }
+
+    if (msg.audio) {
+      state.preview = {
+        type: "audio",
+        file_id: msg.audio.file_id,
+        caption: msg.caption,
+      };
+      const kb = new InlineKeyboard()
+        .text("✅ Send Broadcast", "broadcast:confirm")
+        .text("❌ Cancel", "broadcast:cancel");
+      await ctx.replyWithAudio(msg.audio.file_id, {
+        caption: msg.caption ?? "",
+        parse_mode: "HTML",
+        reply_markup: kb as any,
+      });
+      return;
+    }
+
+    if (msg.voice) {
+      state.preview = { type: "voice", file_id: msg.voice.file_id };
+      const kb = new InlineKeyboard()
+        .text("✅ Send Broadcast", "broadcast:confirm")
+        .text("❌ Cancel", "broadcast:cancel");
+      await ctx.replyWithVoice(msg.voice.file_id, { reply_markup: kb as any });
       return;
     }
 
@@ -36,7 +141,7 @@ export function registerAdminBroadcast(bot: any) {
     const userId = ctx.from?.id;
     if (!userId) return;
     await ctx.answerCallbackQuery();
-    broadcastState.set(userId, { step: "waiting", preview: "" });
+    broadcastState.set(userId, { step: "waiting" });
     const text =
       "📢 Send the broadcast message to all users.\n\nThe message will be sent as-is. Supports HTML formatting.\nSend /cancel to abort.";
     const kb = new InlineKeyboard().text("❌ Cancel", "admin:back");
@@ -75,19 +180,55 @@ export function registerAdminBroadcast(bot: any) {
     let sent = 0;
     let failed = 0;
 
+    const preview = state.preview;
+
     for (const user of users) {
       try {
-        await ctx.api.sendMessage(user.telegram_id, state.preview, {
-          parse_mode: "HTML",
-        });
+        if (preview.type === "text") {
+          await ctx.api.sendMessage(user.telegram_id, preview.text, {
+            parse_mode: "HTML",
+          });
+        } else if (preview.type === "photo") {
+          await ctx.api.sendPhoto(user.telegram_id, preview.file_id, {
+            caption: preview.caption ?? "",
+            parse_mode: "HTML",
+          });
+        } else if (preview.type === "video") {
+          await ctx.api.sendVideo(user.telegram_id, preview.file_id, {
+            caption: preview.caption ?? "",
+            parse_mode: "HTML",
+          });
+        } else if (preview.type === "document") {
+          await ctx.api.sendDocument(user.telegram_id, preview.file_id, {
+            caption: preview.caption ?? "",
+            parse_mode: "HTML",
+          });
+        } else if (preview.type === "animation") {
+          await ctx.api.sendAnimation(user.telegram_id, preview.file_id, {
+            caption: preview.caption ?? "",
+            parse_mode: "HTML",
+          });
+        } else if (preview.type === "audio") {
+          await ctx.api.sendAudio(user.telegram_id, preview.file_id, {
+            caption: preview.caption ?? "",
+            parse_mode: "HTML",
+          });
+        } else if (preview.type === "voice") {
+          await ctx.api.sendVoice(user.telegram_id, preview.file_id);
+        }
         sent++;
-      } catch {
+      } catch (err) {
         failed++;
       }
     }
 
     broadcastState.delete(userId);
-    await logBroadcast(userId, state.preview, sent);
+
+    const logMessage =
+      preview.type === "text"
+        ? preview.text
+        : (preview.caption ?? `<${preview.type}>`);
+    await logBroadcast(userId, logMessage, sent);
 
     const kb = new InlineKeyboard()
       .text("🔙 Back to Admin Panel", "admin:back")
